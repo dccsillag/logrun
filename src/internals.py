@@ -82,7 +82,7 @@ class Experiment:
         experiment_path = \
             ensure_dir_exists(os.path.join(self.rootpath, 'all_experiments', self.uuid))
         experiment_by_file_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_path', self.uuid))
+            ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_path'))
         experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, 'source'))
 
         for module in sys.modules.values():
