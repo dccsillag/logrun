@@ -24,10 +24,10 @@ def add_extra(key, value):
 
 
 def expath(path):
-    if not os.path.exists(os.path.dirname(path)):
-        os.makedirs(path)
+    path = os.path.abspath(path)
 
-    path = os.abspath(path)
+    if not os.path.exists(os.path.dirname(path)):
+        os.makedirs(os.path.dirname(path))
 
     add_output_file(path)
 
