@@ -7,6 +7,8 @@ from abc import ABC, abstractmethod
 import sys
 import atexit
 import os
+import subprocess
+import tempfile
 import platform
 import inspect
 import shutil
@@ -67,6 +69,17 @@ class Experiment:
         self.output_files = []
         self.extra_keys = {}
 
+        tmpstdout_handle, self.stdout_file = tempfile.mkstemp()  # 'stdout.out'
+        tmpstderr_handle, self.stderr_file = tempfile.mkstemp()  # 'stderr.out'
+        os.close(tmpstdout_handle)
+        os.close(tmpstderr_handle)
+
+        self._setup_stdout_redirection(self.stdout_file, self.stderr_file)
+
+    def __del__(self):
+        os.remove(self.stdout_file)
+        os.remove(self.stderr_file)
+
     def add_output_file(self, path):
         self.has_content = True
         self.output_files.append(path)
@@ -74,6 +87,12 @@ class Experiment:
     def add_extra_key(self, key, value):
         self.has_content = True
         self.extra_keys[key] = value
+
+    def _setup_stdout_redirection(self, stdout_file, stderr_file):
+        tee_stdout = subprocess.Popen(['tee', stdout_file], stdin=subprocess.PIPE)
+        os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
+        tee_stderr = subprocess.Popen(['tee', stderr_file], stdin=subprocess.PIPE)
+        os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
 
     def save_experiment(self):
         if not self.has_content:
@@ -125,6 +144,9 @@ class Experiment:
             except git.exc.InvalidGitRepositoryError:
                 pass
             pickle.dump(metadata, file)
+
+        shutil.copyfile(self.stdout_file, os.path.join(experiment_path, 'stdout.out'))
+        shutil.copyfile(self.stderr_file, os.path.join(experiment_path, 'stderr.out'))
 
         output_files_path = ensure_dir_exists(os.path.join(experiment_path, 'output_files'))
         for output_file in self.output_files:
