@@ -15,6 +15,7 @@ import time
 import datetime
 import uuid
 import pickle
+import tarfile
 
 import dill
 
@@ -81,6 +82,7 @@ class Experiment:
 
         experiment_path = \
             ensure_dir_exists(os.path.join(self.rootpath, 'all_experiments', self.uuid))
+        experiment_path_targz = experiment_path + '.tar.gz'
         experiment_by_file_path = \
             ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_path'))
         experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, 'source'))
@@ -118,7 +120,7 @@ class Experiment:
 
             output_file_repr = output_file.replace(os.sep, '%')
             shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
-            os.symlink(experiment_path,
+            os.symlink(experiment_path_targz,
                        os.path.join(ensure_dir_exists(os.path.join(experiment_by_file_path,
                                                                    output_file_repr)),
                                     start_datetime.strftime('%Y-%m-%d-%H-%M-%S') + '.' + self.uuid))
@@ -134,6 +136,12 @@ class Experiment:
             else:
                 with open(path, 'wb') as file:
                     dill.dump(value, file)
+
+        with tarfile.open(experiment_path_targz, 'w:gz') as tar_handle:
+            for root, dirs, files in os.walk(experiment_path):
+                for file in files:
+                    tar_handle.add(os.path.join(root, file))
+        shutil.rmtree(experiment_path)
 
 
 experiment = Experiment()
