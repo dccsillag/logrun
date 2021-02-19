@@ -18,6 +18,7 @@ import pickle
 import tarfile
 
 import dill
+import git
 
 
 start_timestamp = time.time()
@@ -109,14 +110,20 @@ class Experiment:
                 file.write(scriptfile.read())
 
         with open(os.path.join(experiment_path, 'meta.pickle'), 'wb') as file:
-            pickle.dump({
+            metadata = {
                 'host':                 platform.node(),
                 'user':                 os.getlogin(),
                 'cwd':                  os.getcwd(),
                 'argv':                 sys.argv,
                 'start_execution_time': start_datetime,
                 'end_execution_time':   datetime.datetime.now(),
-            }, file)
+            }
+            try:
+                gitrepo = git.Repo(search_parent_directories=True)
+                metadata['gitcommit'] = gitrepo.head.object.hexsha
+            except git.exc.InvalidGitRepositoryError:
+                pass
+            pickle.dump(metadata, file)
 
         output_files_path = ensure_dir_exists(os.path.join(experiment_path, 'output_files'))
         for output_file in self.output_files:
