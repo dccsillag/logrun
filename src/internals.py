@@ -5,6 +5,7 @@ Internal mechanisms for experiment logging.
 from typing import List, Dict, Any
 from abc import ABC, abstractmethod
 import sys
+import atexit
 import os
 import platform
 import inspect
@@ -55,7 +56,7 @@ class Experiment:
     extra_keys: Dict[str, Any]
 
     def __init__(self):
-        self.uuid = uuid.uuid4()
+        self.uuid = str(uuid.uuid4())
         self.rootpath = os.environ.get('MICROLOG_ROOT')
         if self.rootpath is None:
             raise OSError("Environment variable 'MICROLOG_ROOT' is not defined!")
@@ -63,9 +64,6 @@ class Experiment:
         self.has_content = False
         self.output_files = []
         self.extra_keys = {}
-
-    def __del__(self):
-        self._save_experiment()
 
     def add_output_file(self, path):
         self.has_content = True
@@ -75,7 +73,7 @@ class Experiment:
         self.has_content = True
         self.extra_keys[key] = value
 
-    def _save_experiment(self):
+    def save_experiment(self):
         if not self.has_content:
             return
 
@@ -88,16 +86,20 @@ class Experiment:
         experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, 'source'))
 
         for module in sys.modules.values():
+            if not module.__name__.startswith('src.'):
+                continue
+
             source_file = inspect.getsourcefile(module)
-            if source_file.startswith(os.getcwd()):
-                if os.path.getmtime(source_file) > start_execution_time:
-                    print("Warning: source file [%s] modified since start of program execution!")
 
-                with open(os.path.join(experiment_source_directory, os.path.relpath(source_file))) \
-                        as file:
-                    file.write(inspect.getsource(module))
+            if os.path.getmtime(source_file) > start_timestamp:
+                print("Warning: source file [%s] modified since start of program execution!")
 
-        with open(os.path.join(experiment_path, 'meta.tsv'), 'w') as file:
+            with open(os.path.join(experiment_source_directory,
+                                   os.path.relpath(source_file).replace(os.sep, '%')), 'w') \
+                    as file:
+                file.write(inspect.getsource(module))
+
+        with open(os.path.join(experiment_path, 'meta.pickle'), 'wb') as file:
             pickle.dump({
                 'host':                 platform.node(),
                 'user':                 os.getlogin(),
@@ -135,3 +137,4 @@ class Experiment:
 
 
 experiment = Experiment()
+atexit.register(experiment.save_experiment)
