@@ -80,19 +80,22 @@ class Experiment:
             return
 
         print("[Saving experiment: %s]" % self.uuid)
-        print("[  MICROLOG_ROOT = %s]" % self.rootpath)
 
         experiment_path = \
             ensure_dir_exists(os.path.join(self.rootpath, 'all_experiments', self.uuid))
         experiment_by_file_path = \
             ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_path', self.uuid))
+        experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, 'source'))
 
-        with tarfile.open(os.path.join(experiment_path, 'source.tar.gz'), 'w:gz') as tar:
-            for module in sys.modules.values():
-                source_file = inspect.getsourcefile(module)
-                if source_file.startswith(os.getcwd()):
-                    # TODO: check if file has not been modified since start of execution
-                    tar.add(os.path.relpath(source_file), recursive=False)
+        for module in sys.modules.values():
+            source_file = inspect.getsourcefile(module)
+            if source_file.startswith(os.getcwd()):
+                if os.path.getmtime(source_file) > start_execution_time:
+                    print("Warning: source file [%s] modified since start of program execution!")
+
+                with open(os.path.join(experiment_source_directory, os.path.relpath(source_file))) \
+                        as file:
+                    file.write(inspect.getsource(module))
 
         with open(os.path.join(experiment_path, 'meta.tsv'), 'w') as file:
             pickle.dump({
