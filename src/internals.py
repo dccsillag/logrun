@@ -117,6 +117,7 @@ class Experiment:
                 'argv':                 sys.argv,
                 'start_execution_time': start_datetime,
                 'end_execution_time':   datetime.datetime.now(),
+                'environment':          dict(os.environ),
             }
             try:
                 gitrepo = git.Repo(search_parent_directories=True)
