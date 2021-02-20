@@ -89,10 +89,6 @@ class Experiment:
 
         self._setup_stdout_redirection(self.stdout_file, self.stderr_file)
 
-    def __del__(self):
-        os.remove(self.stdout_file)
-        os.remove(self.stderr_file)
-
     def add_output_file(self, path):
         self.has_content = True
         self.output_files.append(path)
@@ -111,8 +107,13 @@ class Experiment:
         tee_stderr = subprocess.Popen(['tee', stderr_file], stdin=subprocess.PIPE)
         os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
 
+    def _cleanup(self):
+        if os.path.exists(self.stdout_file): os.remove(self.stdout_file)
+        if os.path.exists(self.stderr_file): os.remove(self.stderr_file)
+
     def save_experiment(self):
         if not self.has_content:
+            self._cleanup()
             return
 
         print("[Saving experiment: %s]" % self.uuid)
@@ -202,6 +203,8 @@ class Experiment:
                 for file in files:
                     tar_handle.add(os.path.join(root, file))
         shutil.rmtree(experiment_path)
+
+        self._cleanup()
 
 
 experiment = Experiment()
