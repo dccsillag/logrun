@@ -2,7 +2,7 @@
 Experiment logging utilities.
 """
 
-from src.internals import experiment
+from microlog.internals import experiment
 import os
 import sys
 
