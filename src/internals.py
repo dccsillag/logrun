@@ -40,6 +40,17 @@ def ensure_dir_exists(path):
     return os.path.abspath(path)
 
 
+def get_last_modification_timestamp(path):
+    path = os.path.abspath(os.path.realpath(path))
+
+    if os.path.isfile(path):
+        return os.path.getmtime(path)
+    elif os.path.isdir(path):
+        return max(os.path.getmtime(root) for root, _, _ in os.walk(path))
+    else:
+        return None
+
+
 class Artifact(ABC):
     @abstractmethod
     def write(self, path: str):
@@ -57,6 +68,7 @@ class Experiment:
 
     has_content: bool
     output_files: List[str]
+    input_files: List[str]
     extra_keys: Dict[str, Any]
 
     def __init__(self):
@@ -67,6 +79,7 @@ class Experiment:
 
         self.has_content = False
         self.output_files = []
+        self.input_files = []
         self.extra_keys = {}
 
         tmpstdout_handle, self.stdout_file = tempfile.mkstemp()  # 'stdout.out'
@@ -83,6 +96,10 @@ class Experiment:
     def add_output_file(self, path):
         self.has_content = True
         self.output_files.append(path)
+
+    def add_input_file(self, path):
+        self.has_content = True
+        self.input_files.append(path)
 
     def add_extra_key(self, key, value):
         self.has_content = True
@@ -103,8 +120,10 @@ class Experiment:
         experiment_path = \
             ensure_dir_exists(os.path.join(self.rootpath, 'all_experiments', self.uuid))
         experiment_path_targz = experiment_path + '.tar.gz'
-        experiment_by_file_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_path'))
+        experiment_by_outfile_path = \
+            ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_output_file'))
+        experiment_by_infile_path = \
+            ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_input_file'))
         experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, 'source'))
 
         for module in sys.modules.values():
@@ -158,9 +177,13 @@ class Experiment:
             output_file_repr = output_file.replace(os.sep, '%')
             shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
             os.symlink(experiment_path_targz,
-                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_file_path,
+                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_outfile_path,
                                                                    output_file_repr)),
                                     start_datetime.strftime('%Y-%m-%d-%H-%M-%S') + '.' + self.uuid))
+        with open(os.path.join(experiment_path, 'input_files.pickle'), 'wb') as file:
+            pickle.dump({input_file: get_last_modification_timestamp(input_file)
+                         for input_file in self.input_files},
+                        file)
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, 'extra_keys'))
 

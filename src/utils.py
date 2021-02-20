@@ -19,8 +19,20 @@ def add_output_file(path):
     experiment.add_output_file(path)
 
 
+def add_input_file(path):
+    experiment.add_input_file(path)
+
+
 def add_extra(key, value):
     experiment.add_extra_key(key, value)
+
+
+def inpath(path):
+    path = os.path.abspath(path)
+
+    add_input_file(path)
+
+    return path
 
 
 def expath(path):
