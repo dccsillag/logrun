@@ -10,6 +10,7 @@ import sys
 __all__ = [
     'add_output_file',
     'add_extra',
+    'inpath',
     'expath',
     'add_pytorch_model',
 ]
