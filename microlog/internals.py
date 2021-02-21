@@ -18,6 +18,7 @@ import datetime
 import uuid
 import pickle
 import tarfile
+import xxhash
 
 import dill
 import git
@@ -40,15 +41,21 @@ def ensure_dir_exists(path):
     return os.path.abspath(path)
 
 
-def get_last_modification_timestamp(path):
+def eval_checksum(path, state=None, digest=True):
     path = os.path.abspath(os.path.realpath(path))
 
+    if state is None:
+        state = xxhash.xxh32()
+
     if os.path.isfile(path):
-        return os.path.getmtime(path)
+        with open(path, 'rb') as file:
+            state.update(file.read())
     elif os.path.isdir(path):
-        return max(os.path.getmtime(root) for root, _, _ in os.walk(path))
-    else:
-        return None
+        for child in os.listdir(path):
+            eval_checksum(os.path.join(path, child), state=state, digest=False)
+
+    if digest:
+        return state.hexdigest()
 
 
 class Artifact(ABC):
@@ -182,7 +189,7 @@ class Experiment:
                                                                    output_file_repr)),
                                     start_datetime.strftime('%Y-%m-%d-%H-%M-%S') + '.' + self.uuid))
         with open(os.path.join(experiment_path, 'input_files.pickle'), 'wb') as file:
-            pickle.dump({input_file: get_last_modification_timestamp(input_file)
+            pickle.dump({input_file: eval_checksum(input_file)
                          for input_file in self.input_files},
                         file)
 
