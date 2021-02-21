@@ -42,3 +42,12 @@ add_model(model).save(expath("trained_model.pth"))
 ```
 
 The code above, although containing a little bit more code, will also log training history data, model predictions, metrics, etc.
+
+## Documentation
+
+The documentation can be generated using `pdoc3`. For example:
+
+```sh
+pip install pdoc3
+pdoc --html .
+```
