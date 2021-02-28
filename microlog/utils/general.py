@@ -5,8 +5,8 @@ General experiment logging utilities.
 from pathlib import Path
 import os
 import sys
-from microlog.internals import experiment
-from microlog.internals import ensure_dir_exists as _ensure_dir_exists
+from exlog.internals import experiment
+from exlog.internals import ensure_dir_exists as _ensure_dir_exists
 
 
 __all__ = [

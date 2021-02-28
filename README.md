@@ -1,4 +1,4 @@
-# microlog
+# exlog
 
 A package for experiment logging in Python.
 
@@ -15,7 +15,7 @@ Features include:
 The following example trains a model and registers an experiment that outputed the file `trained_model.pth`:
 
 ```python
-from microlog import expath
+from exlog import expath
 import pickle
 
 
@@ -26,12 +26,12 @@ model = ...
 model.save(expath("trained_model.pth"))
 ```
 
-Note that you only needed to import the module and use the `expath` function here. Everything else is neatly encapsulated in the `microlog.internals` module.
+Note that you only needed to import the module and use the `expath` function here. Everything else is neatly encapsulated in the `exlog.internals` module.
 
 We also provide **(NOTE: TODO)** utils for dealing with PyTorch (and Keras?) models directly, so the code can become:
 
 ```python
-from microlog import expath, add_model
+from exlog.utils.general import expath, add_model
 
 
 ...  # your experiment, yada yada yada

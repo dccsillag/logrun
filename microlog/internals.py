@@ -84,9 +84,9 @@ class Experiment:
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
-        self.rootpath = os.environ.get('MICROLOG_ROOT')
+        self.rootpath = os.environ.get('EXLOG_ROOT')
         if self.rootpath is None:
-            raise OSError("Environment variable 'MICROLOG_ROOT' is not defined!")
+            raise OSError("Environment variable 'EXLOG_ROOT' is not defined!")
 
         self.has_content = False
         self.output_files = []
