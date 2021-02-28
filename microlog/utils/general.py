@@ -3,6 +3,7 @@ General experiment logging utilities.
 """
 
 from microlog.internals import experiment
+from microlog.internals import ensure_dir_exists as _ensure_dir_exists
 import os
 import sys
 
@@ -40,13 +41,12 @@ def inpath(path):
     return path
 
 
-def outpath(path):
+def outpath(path, ensure_dir_exists=True):
     path = os.path.abspath(path)
 
-    if not os.path.exists(os.path.dirname(path)):
-        os.makedirs(os.path.dirname(path))
+    if ensure_dir_exists:
+        _ensure_dir_exists(path)
 
     add_output_file(path)
 
     return path
-

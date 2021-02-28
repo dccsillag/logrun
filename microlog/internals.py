@@ -36,6 +36,8 @@ def get_script_path():
 
 
 def ensure_dir_exists(path):
+    path = os.path.abspath(os.path.realpath(path))
+
     if not os.path.exists(path):
         os.makedirs(path)
 
