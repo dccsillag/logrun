@@ -18,9 +18,7 @@ import time
 import datetime
 import uuid
 import pickle
-import tarfile
 
-from tqdm import tqdm
 import xxhash
 import psutil
 import dill
@@ -237,7 +235,7 @@ class Experiment:
                     dill.dump(value, file)
 
         with tarfile.open(experiment_path_targz, 'w:gz') as tar_handle:
-            for root, dirs, files in os.walk(experiment_path):
+            for root, _, files in os.walk(experiment_path):
                 for file in files:
                     tar_handle.add(os.path.join(root, file))
         shutil.rmtree(experiment_path)
