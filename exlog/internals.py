@@ -25,17 +25,33 @@ import dill
 import git
 
 
+__all__ = [
+    'Artifact',
+    'ensure_dir_exists',
+    'Experiment',
+    'experiment',
+]
+
+
 start_timestamp = time.time()
 start_datetime = datetime.datetime.now()
 
 
 def get_script_path():
+    """
+    Returns the path to the currently running script.
+    """
+
     path = os.path.abspath(sys.argv[0])
     assert os.path.exists(path)
     return path
 
 
 def ensure_dir_exists(path):
+    """
+    Ensure that the the given path exists and is a directory. Returns the absolute path.
+    """
+
     path = os.path.abspath(os.path.realpath(path))
 
     if not os.path.exists(path):
@@ -45,6 +61,10 @@ def ensure_dir_exists(path):
 
 
 def eval_checksum(path, state=None, digest=True):
+    """
+    Evaluates the checksum of a given path (which can be either a file or a directory).
+    """
+
     path = os.path.abspath(os.path.realpath(path))
 
     if state is None:
@@ -73,17 +93,30 @@ def eval_checksum(path, state=None, digest=True):
 
 
 class Artifact(ABC):
+    """
+    Represents that an object to be saved should be saved in a special way (instead of defaulting to
+    using `dill`).
+    """
+
     @abstractmethod
     def write(self, path: str):
-        pass
+        """
+        Write the object to the path `path`.
+        """
 
     @abstractmethod
     def read(self, path: str):
-        pass
+        """
+        Read the object from the path `path`.
+        """
 
 
 # pylint: disable=too-few-public-methods
 class Experiment:
+    """
+    Represents an experiment to be logged.
+    """
+
     uuid: str
     rootpath: str
 
@@ -113,14 +146,30 @@ class Experiment:
         self._setup_stdout_redirection(self.stdout_file, self.stderr_file)
 
     def add_output_file(self, path):
+        """
+        Add an output file to be logged (a copy of the file is saved).
+        """
+
         self.has_content = True
         self.output_files.append(path)
 
     def add_input_file(self, path):
+        """
+        Add an input file to be logged (only its checksum is saved).
+        """
+
         self.has_content = True
         self.input_files.append(path)
 
     def add_extra_key(self, key, value, overwrite=True):
+        """
+        Add some arbitrary information to be saved with the experiment.
+
+        If the key specified by `key` already exists, behaviour depends on the value of `overwrite`:
+        if `overwrite` is `True`, then a warning is thrown and the value is overwritten; if
+        `overwrite` is `False`, then both (or however many) values are kept in a list.
+        """
+
         self.has_content = True
         if key in self.extra_keys:
             if overwrite:
@@ -148,6 +197,10 @@ class Experiment:
         if os.path.exists(self.stderr_file): os.remove(self.stderr_file)
 
     def save_experiment(self):
+        """
+        Save the experiment.
+        """
+
         if not self.has_content:
             self._cleanup()
             return

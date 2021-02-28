@@ -33,7 +33,6 @@ General experiment logging utilities.
 
 from pathlib import Path
 import os
-import sys
 from exlog.internals import experiment
 from exlog.internals import ensure_dir_exists as _ensure_dir_exists
 
@@ -48,6 +47,10 @@ __all__ = [
 
 
 def add_input_file(path):
+    &#34;&#34;&#34;
+    Add a given input file to be logged.
+    &#34;&#34;&#34;
+
     if not isinstance(path, (str, Path)):
         raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
 
@@ -55,6 +58,10 @@ def add_input_file(path):
 
 
 def add_output_file(path):
+    &#34;&#34;&#34;
+    Add a given output file to be logged.
+    &#34;&#34;&#34;
+
     if not isinstance(path, (str, Path)):
         raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
 
@@ -62,6 +69,10 @@ def add_output_file(path):
 
 
 def add_extra(key, value):
+    &#34;&#34;&#34;
+    Add some additional data given by `value` under key `key`.
+    &#34;&#34;&#34;
+
     if not isinstance(key, str):
         raise TypeError(&#34;key must be &#39;str&#39;&#34;)
 
@@ -69,6 +80,10 @@ def add_extra(key, value):
 
 
 def inpath(path):
+    &#34;&#34;&#34;
+    Add a given input path `path` to be logged, and return it.
+    &#34;&#34;&#34;
+
     if not isinstance(path, (str, Path)):
         raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
 
@@ -80,6 +95,11 @@ def inpath(path):
 
 
 def outpath(path, ensure_dir_exists=True):
+    &#34;&#34;&#34;
+    Add a given output path `path` to be logged, create its containing directory if it does not
+    exist, and return it.
+    &#34;&#34;&#34;
+
     if not isinstance(path, (str, Path)):
         raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
 
@@ -104,12 +124,16 @@ def outpath(path, ensure_dir_exists=True):
 <span>def <span class="ident">add_extra</span></span>(<span>key, value)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Add some additional data given by <code>value</code> under key <code>key</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_extra(key, value):
+    &#34;&#34;&#34;
+    Add some additional data given by `value` under key `key`.
+    &#34;&#34;&#34;
+
     if not isinstance(key, str):
         raise TypeError(&#34;key must be &#39;str&#39;&#34;)
 
@@ -120,12 +144,16 @@ def outpath(path, ensure_dir_exists=True):
 <span>def <span class="ident">add_input_file</span></span>(<span>path)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Add a given input file to be logged.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_input_file(path):
+    &#34;&#34;&#34;
+    Add a given input file to be logged.
+    &#34;&#34;&#34;
+
     if not isinstance(path, (str, Path)):
         raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
 
@@ -136,12 +164,16 @@ def outpath(path, ensure_dir_exists=True):
 <span>def <span class="ident">add_output_file</span></span>(<span>path)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Add a given output file to be logged.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def add_output_file(path):
+    &#34;&#34;&#34;
+    Add a given output file to be logged.
+    &#34;&#34;&#34;
+
     if not isinstance(path, (str, Path)):
         raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
 
@@ -152,12 +184,16 @@ def outpath(path, ensure_dir_exists=True):
 <span>def <span class="ident">inpath</span></span>(<span>path)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Add a given input path <code>path</code> to be logged, and return it.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def inpath(path):
+    &#34;&#34;&#34;
+    Add a given input path `path` to be logged, and return it.
+    &#34;&#34;&#34;
+
     if not isinstance(path, (str, Path)):
         raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
 
@@ -172,12 +208,18 @@ def outpath(path, ensure_dir_exists=True):
 <span>def <span class="ident">outpath</span></span>(<span>path, ensure_dir_exists=True)</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Add a given output path <code>path</code> to be logged, create its containing directory if it does not
+exist, and return it.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def outpath(path, ensure_dir_exists=True):
+    &#34;&#34;&#34;
+    Add a given output path `path` to be logged, create its containing directory if it does not
+    exist, and return it.
+    &#34;&#34;&#34;
+
     if not isinstance(path, (str, Path)):
         raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
 
