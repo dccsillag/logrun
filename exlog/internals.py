@@ -19,8 +19,10 @@ import datetime
 import uuid
 import pickle
 import tarfile
-import xxhash
 
+from tqdm import tqdm
+import xxhash
+import psutil
 import dill
 import git
 
@@ -51,8 +53,19 @@ def eval_checksum(path, state=None, digest=True):
         state = xxhash.xxh3_64()
 
     if os.path.isfile(path):
-        with open(path, 'rb') as file:
-            state.update(file.read())
+        filesize = os.path.getsize(path)
+        available_memory = psutil.virtual_memory().available
+        if 10*filesize <= available_memory:
+            with open(path, 'rb') as file:
+                state.update(file.read())
+        else:
+            chunksize = max(available_memory//10, state.block_size)
+            with open(path, 'rb') as file:
+                while True:
+                    chunk = file.read(chunksize)
+                    if not chunk:
+                        break
+                    state.update(chunk)
     elif os.path.isdir(path):
         for child in os.listdir(path):
             eval_checksum(os.path.join(path, child), state=state, digest=False)
