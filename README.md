@@ -45,7 +45,9 @@ The code above, although containing a little bit more code, will also log traini
 
 ## Documentation
 
-The documentation can be generated using `pdoc3`. For example:
+The documentation is available at [https://dccsillag.github.io/exlog/exlog/utils/index.html]().
+
+To generate it manually, use [`pdoc3`](https://pdoc3.github.io/pdoc/):
 
 ```sh
 pdoc --html exlog -o docs
