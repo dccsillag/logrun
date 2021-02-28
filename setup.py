@@ -7,7 +7,7 @@ setup(
     description="A convenient experiment logging package for Python",
     url="https://github.com/dccsillag/exlog",
     author="Daniel Csillag",
-    license="WTFPL",
+    license="MIT",
     packages=['exlog'],
     install_requires=['dill', 'gitpython'],
 
