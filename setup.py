@@ -9,7 +9,10 @@ setup(
     author="Daniel Csillag",
     license="MIT",
     packages=['exlog'],
-    install_requires=['dill', 'gitpython'],
+    install_requires=['dill',
+                      'psutil',
+                      'xxhash',
+                      'gitpython'],
 
     # TODO: classifiers
 )
