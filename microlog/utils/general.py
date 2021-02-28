@@ -1,5 +1,5 @@
 """
-Experiment logging utilities.
+General experiment logging utilities.
 """
 
 from microlog.internals import experiment
@@ -13,7 +13,6 @@ __all__ = [
     'add_extra',
     'inpath',
     'outpath',
-    'add_pytorch_model',
 ]
 
 
@@ -51,6 +50,3 @@ def outpath(path):
 
     return path
 
-
-def add_pytorch_model(model):
-    pass # TODO
