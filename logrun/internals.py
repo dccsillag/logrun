@@ -274,6 +274,12 @@ class Experiment:
             pickle.dump({input_file: eval_checksum(input_file)
                          for input_file in self.input_files},
                         file)
+        for input_file in self.input_files:
+            input_file_repr = input_file.replace(os.sep, '%')
+            os.symlink(experiment_path_targz,
+                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_infile_path,
+                                                                   input_file_repr)),
+                                    start_datetime.strftime('%Y-%m-%d-%H-%M-%S') + '.' + self.uuid))
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, 'extra_keys'))
 
