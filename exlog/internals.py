@@ -48,7 +48,7 @@ def eval_checksum(path, state=None, digest=True):
     path = os.path.abspath(os.path.realpath(path))
 
     if state is None:
-        state = xxhash.xxh32()
+        state = xxhash.xxh3_64()
 
     if os.path.isfile(path):
         with open(path, 'rb') as file:
