@@ -45,7 +45,7 @@ The code above, although containing a little bit more code, will also log traini
 
 ## Documentation
 
-The documentation is available at [https://dccsillag.github.io/exlog/exlog/]().
+The documentation is available at [https://dccsillag.github.io/exlog/exlog/](https://dccsillag.github.io/exlog/exlog/).
 
 To generate it manually, use [`pdoc3`](https://pdoc3.github.io/pdoc/):
 
