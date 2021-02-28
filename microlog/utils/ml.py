@@ -11,7 +11,7 @@ __all__ = [
 
 
 def add_metric(metric_name, value):
-    experiment.add_extra_key('metric:' + metric_name, value)
+    experiment.add_extra_key('metric:' + metric_name, value, overwrite=False)
 
 
 def add_pytorch_model(model):
