@@ -6,6 +6,7 @@ from typing import List, Dict, Any
 from abc import ABC, abstractmethod
 import sys
 import atexit
+import warnings
 import os
 import subprocess
 import tempfile
@@ -77,6 +78,7 @@ class Experiment:
     output_files: List[str]
     input_files: List[str]
     extra_keys: Dict[str, Any]
+    multiple: Dict[str, bool]
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
@@ -88,6 +90,7 @@ class Experiment:
         self.output_files = []
         self.input_files = []
         self.extra_keys = {}
+        self.multiple = {}
 
         tmpstdout_handle, self.stdout_file = tempfile.mkstemp()  # 'stdout.out'
         tmpstderr_handle, self.stderr_file = tempfile.mkstemp()  # 'stderr.out'
@@ -104,9 +107,22 @@ class Experiment:
         self.has_content = True
         self.input_files.append(path)
 
-    def add_extra_key(self, key, value):
+    def add_extra_key(self, key, value, overwrite=True):
         self.has_content = True
-        self.extra_keys[key] = value
+        if key in self.extra_keys:
+            if overwrite:
+                warnings.warn("Overwriting key '%s' in experiment" % key)
+                self.extra_keys[key] = value
+                self.multiple[key] = False
+            else:
+                if self.multiple[key]:
+                    self.extra_keys[key].append(value)
+                else:
+                    self.multiple[key] = True
+                    self.extra_keys[key] = [self.extra_keys[key], value]
+        else:
+            self.extra_keys[key] = value
+            self.multiple[key] = False
 
     def _setup_stdout_redirection(self, stdout_file, stderr_file):
         tee_stdout = subprocess.Popen(['tee', stdout_file], stdin=subprocess.PIPE)
