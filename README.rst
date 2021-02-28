@@ -1,8 +1,13 @@
-# exlog
+=====
+exlog
+=====
 
-A package for experiment logging in Python.
+----------------------------------------
+Convenient experiment logging in Python.
+----------------------------------------
 
-Features include:
+Features
+========
 
 - Stores relevant source code (only what is necessary) with the experiments automatically;
 - Easily fetch the experiments that generated a given file;
@@ -10,44 +15,46 @@ Features include:
 - Shouldn't use tons of storage;
 - Everything runs locally -- no possibly-sketchy third-party will be getting aceess to your code and experiments.
 
-## Example usage
+Example Usage
+=============
 
 The following example trains a model and registers an experiment that outputed the file `trained_model.pth`:
 
-```python
-from exlog import expath
-import pickle
+.. code:: python
+
+    from exlog import expath
+    import pickle
 
 
-...  # your experiment, yada yada yada
-model = ...
-...  # your experiment, yada yada yada
+    ...  # your experiment, yada yada yada
+    model = ...
+    ...  # your experiment, yada yada yada
 
-model.save(expath("trained_model.pth"))
-```
+    model.save(expath("trained_model.pth"))
 
 Note that you only needed to import the module and use the `expath` function here. Everything else is neatly encapsulated in the `exlog.internals` module.
 
 We also provide **(NOTE: TODO)** utils for dealing with PyTorch (and Keras?) models directly, so the code can become:
 
-```python
-from exlog.utils.general import expath, add_model
+.. code:: python
+
+    from exlog.utils.general import expath, add_model
 
 
-...  # your experiment, yada yada yada
-model = ...
-...  # your experiment, yada yada yada
+    ...  # your experiment, yada yada yada
+    model = ...
+    ...  # your experiment, yada yada yada
 
-add_model(model).save(expath("trained_model.pth"))
-```
+    add_model(model).save(expath("trained_model.pth"))
 
 The code above, although containing a little bit more code, will also log training history data, model predictions, metrics, etc.
 
-## Documentation
+Documentation
+=============
 
 The documentation can be generated using `pdoc3`. For example:
 
-```sh
-pip install pdoc3
-pdoc --html .
-```
+.. code:: sh
+
+    pip install pdoc3
+    pdoc --html .
