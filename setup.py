@@ -8,7 +8,7 @@ setup(
     url="https://github.com/dccsillag/exlog",
     author="Daniel Csillag",
     license="MIT",
-    packages=['exlog'],
+    packages=['exlog', 'exlog.utils'],
     install_requires=['dill',
                       'psutil',
                       'xxhash',

@@ -1,1 +1,2 @@
-from exlog.utils import *
+from exlog import utils
+from exlog import internals
