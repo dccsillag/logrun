@@ -9,16 +9,16 @@ with open(os.path.join(this_directory, 'README.md')) as file:
 
 
 setup(
-    name="exlog",
+    name="logrun",
     version="0.1.1",
     description="A convenient experiment logging package for Python",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url="https://github.com/dccsillag/exlog",
+    url="https://github.com/dccsillag/logrun",
     author="Daniel Csillag",
     author_email="dccsillag@gmail.com",
     license="MIT",
-    packages=['exlog', 'exlog.utils'],
+    packages=['logrun', 'logrun.utils'],
     install_requires=['dill',
                       'psutil',
                       'xxhash',

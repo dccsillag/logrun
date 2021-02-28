@@ -4,8 +4,8 @@ General experiment logging utilities.
 
 from pathlib import Path
 import os
-from exlog.internals import experiment
-from exlog.internals import ensure_dir_exists as _ensure_dir_exists
+from logrun.internals import experiment
+from logrun.internals import ensure_dir_exists as _ensure_dir_exists
 
 
 __all__ = [

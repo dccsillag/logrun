@@ -1,4 +1,4 @@
-# exlog
+# logrun
 
 A package for experiment logging in Python.
 
@@ -15,7 +15,7 @@ Features include:
 The following example trains a model and registers an experiment that outputed the file `trained_model.pth`:
 
 ```python
-from exlog import expath
+from logrun import expath
 import pickle
 
 
@@ -26,12 +26,12 @@ model = ...
 model.save(expath("trained_model.pth"))
 ```
 
-Note that you only needed to import the module and use the `expath` function here. Everything else is neatly encapsulated in the `exlog.internals` module.
+Note that you only needed to import the module and use the `expath` function here. Everything else is neatly encapsulated in the `logrun.internals` module.
 
 We also provide **(NOTE: TODO)** utils for dealing with PyTorch (and Keras?) models directly, so the code can become:
 
 ```python
-from exlog.utils.general import expath, add_model
+from logrun.utils.general import expath, add_model
 
 
 ...  # your experiment, yada yada yada
@@ -45,10 +45,10 @@ The code above, although containing a little bit more code, will also log traini
 
 ## Documentation
 
-The documentation is available at [https://dccsillag.github.io/exlog/exlog/](https://dccsillag.github.io/exlog/exlog/).
+The documentation is available at [https://dccsillag.github.io/logrun/logrun/](https://dccsillag.github.io/logrun/logrun/).
 
 To generate it manually, use [`pdoc3`](https://pdoc3.github.io/pdoc/):
 
 ```sh
-pdoc --html exlog -o docs
+pdoc --html logrun -o docs
 ```

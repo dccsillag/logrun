@@ -2,7 +2,7 @@
 Experiment logging utilities for Machine Learning.
 """
 
-from exlog.internals import experiment
+from logrun.internals import experiment
 
 
 __all__ = [
