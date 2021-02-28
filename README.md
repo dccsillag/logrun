@@ -48,6 +48,5 @@ The code above, although containing a little bit more code, will also log traini
 The documentation can be generated using `pdoc3`. For example:
 
 ```sh
-pip install pdoc3
-pdoc --html .
+pdoc --html exlog -o docs
 ```
