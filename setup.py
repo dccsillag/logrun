@@ -10,7 +10,7 @@ with open(os.path.join(this_directory, 'README.md')) as file:
 
 setup(
     name="logrun",
-    version="0.1.1",
+    version="0.1.0",
     description="A convenient experiment logging package for Python",
     long_description=long_description,
     long_description_content_type='text/markdown',
