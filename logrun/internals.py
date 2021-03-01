@@ -212,6 +212,8 @@ class Experiment:
         Save the experiment.
         """
 
+        from logrun import __version__
+
         if not self.has_content:
             self._cleanup()
             return
@@ -254,6 +256,7 @@ class Experiment:
                 'user':                 os.getlogin(),
                 'cwd':                  os.getcwd(),
                 'argv':                 sys.argv,
+                'logrun_version':       __version__,
                 'start_execution_time': start_datetime,
                 'end_execution_time':   datetime.datetime.now(),
                 'environment':          dict(os.environ),
