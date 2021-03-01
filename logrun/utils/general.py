@@ -61,7 +61,7 @@ def inpath(path: str) -> str:
 
     path = os.path.abspath(path)
 
-    add_input_file(path)
+    log_input_file(path)
 
     return path
 
@@ -80,6 +80,6 @@ def outpath(path: str, ensure_dir_exists: bool = True) -> str:
     if ensure_dir_exists:
         _ensure_dir_exists(path)
 
-    add_output_file(path)
+    log_output_file(path)
 
     return path
