@@ -10,6 +10,14 @@ Features include:
 - Shouldn't use tons of storage;
 - Everything runs locally -- no possibly-sketchy third-party will be getting aceess to your code and experiments.
 
+## Install
+
+`logrun` can be installed [via `pip`](https://pypi.org/project/logrun/):
+
+```sh
+pip install logrun
+```
+
 ## Example usage
 
 The following example trains a model and registers an experiment that outputed the file `trained_model.pth`:
