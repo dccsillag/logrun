@@ -11,10 +11,8 @@ from logrun.internals import experiment, Artifact
 __all__ = [
     'ImageArtifact',
     'VideoArtifact',
-    'NumpyArtifact',
     'add_image',
     'add_video',
-    'add_ndarray',
 ]
 
 
@@ -53,23 +51,6 @@ class VideoArtifact(Artifact):
         imageio.mimwrite(path, self.frames, format='mp4', output_params=['-f', 'mp4'])
 
 
-class NumpyArtifact(Artifact):
-    """
-    Implements how to read and write a raw NumPy array.
-    """
-
-    def __init__(self, data):
-        self.data = np.asarray(data)
-
-    @staticmethod
-    def read(path):
-        return np.load(path)
-
-    def write(self, path):
-        with open(path, 'wb') as file:
-            np.save(file, self.data)
-
-
 def add_image(key, image, overwrite=False):
     """
     Add an image identified by `key` to the extra keys to be logged.
@@ -96,17 +77,3 @@ def add_video(key, frames, overwrite=False):
         raise TypeError("key must be 'str'")
 
     experiment.add_extra_key(key, VideoArtifact(frames), overwrite=overwrite)
-
-
-def add_ndarray(key, array, overwrite=False):
-    """
-    Add a NumPy arrray identified by `key` to the extra keys to be logged.
-
-    If called multiple times with `overwrite` set to `False`, then writes this key as a sequence of
-    arrays.
-    """
-
-    if not isinstance(key, str):
-        raise TypeError("key must be 'str'")
-
-    experiment.add_extra_key(key, NumpyArtifact(array), overwrite=overwrite)
