@@ -120,10 +120,6 @@ class Experiment:
 
     uuid: str
     """ The experiment's ID. """
-    rootpath: str
-    """ Path where the experiment will be written to.
-
-    This is acquired via the `MICRLOG_ROOT` environment variable. """
 
     has_content: bool
     """ A member variable that tracks whether there is anything to log. """
@@ -139,9 +135,6 @@ class Experiment:
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
-        self.rootpath = os.environ.get('LOGRUN_ROOT')
-        if self.rootpath is None:
-            raise OSError("Environment variable 'LOGRUN_ROOT' is not defined!")
 
         self.has_content = False
         self.output_files = []
@@ -209,7 +202,7 @@ class Experiment:
 
     def save_experiment(self) -> None:
         """
-        Save the experiment.
+        Save the experiment to the path given by the `$LOGRUN_ROOT` environment variable.
         """
 
         from logrun import __version__
@@ -218,15 +211,19 @@ class Experiment:
             self._cleanup()
             return
 
+        rootpath = os.environ.get('LOGRUN_ROOT')
+        if rootpath is None:
+            raise OSError("Environment variable 'LOGRUN_ROOT' is not defined! Cannot save experiment.")
+
         print("[Saving experiment: %s]" % self.uuid)
 
         experiment_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, 'all_experiments', self.uuid))
+            ensure_dir_exists(os.path.join(rootpath, 'all_experiments', self.uuid))
         experiment_path_targz = experiment_path + '.tar.gz'
         experiment_by_outfile_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_output_file'))
+            ensure_dir_exists(os.path.join(rootpath, 'experiments_by_output_file'))
         experiment_by_infile_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, 'experiments_by_input_file'))
+            ensure_dir_exists(os.path.join(rootpath, 'experiments_by_input_file'))
         experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, 'source'))
 
         for module in sys.modules.values():
