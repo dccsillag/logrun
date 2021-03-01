@@ -9,15 +9,15 @@ from logrun.internals import ensure_dir_exists as _ensure_dir_exists
 
 
 __all__ = [
-    'add_input_file',
-    'add_output_file',
-    'add_extra',
+    'log_input_file',
+    'log_output_file',
+    'log_extra',
     'inpath',
     'outpath',
 ]
 
 
-def add_input_file(path):
+def log_input_file(path):
     """
     Add a given input file to be logged.
     """
@@ -28,7 +28,7 @@ def add_input_file(path):
     experiment.add_input_file(path)
 
 
-def add_output_file(path):
+def log_output_file(path):
     """
     Add a given output file to be logged.
     """
@@ -39,7 +39,7 @@ def add_output_file(path):
     experiment.add_output_file(path)
 
 
-def add_extra(key, value):
+def log_extra(value, key):
     """
     Add some additional data given by `value` under key `key`.
     """

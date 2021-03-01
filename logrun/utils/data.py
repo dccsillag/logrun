@@ -11,9 +11,9 @@ from logrun.internals import experiment, Artifact
 __all__ = [
     'NumpyArtifact',
     'PandasArtifact',
-    'add_ndarray',
-    'add_series',
-    'add_dataframe',
+    'log_ndarray',
+    'log_series',
+    'log_dataframe',
 ]
 
 
@@ -52,7 +52,7 @@ class PandasArtifact(Artifact):
         self.data.to_hdf(path, 'data')
 
 
-def add_ndarray(key, array, overwrite=False):
+def log_ndarray(array, key, overwrite=False):
     """
     Add a NumPy arrray identified by `key` to the extra keys to be logged.
 
@@ -66,7 +66,7 @@ def add_ndarray(key, array, overwrite=False):
     experiment.add_extra_key(key, NumpyArtifact(array), overwrite=overwrite)
 
 
-def add_series(key, series, overwrite=False):
+def log_series(series, key, overwrite=False):
     """
     Add a Pandas Series identified by `key` to the extra keys to be logged.
 
@@ -82,7 +82,7 @@ def add_series(key, series, overwrite=False):
     experiment.add_extra_key(key, PandasArtifact(series), overwrite=overwrite)
 
 
-def add_dataframe(key, dataframe, overwrite=False):
+def log_dataframe(dataframe, key, overwrite=False):
     """
     Add a Pandas DataFrame identified by `key` to the extra keys to be logged.
 

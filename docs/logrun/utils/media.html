@@ -40,8 +40,8 @@ from logrun.internals import experiment, Artifact
 __all__ = [
     &#39;ImageArtifact&#39;,
     &#39;VideoArtifact&#39;,
-    &#39;add_image&#39;,
-    &#39;add_video&#39;,
+    &#39;log_image&#39;,
+    &#39;log_video&#39;,
 ]
 
 
@@ -80,7 +80,7 @@ class VideoArtifact(Artifact):
         imageio.mimwrite(path, self.frames, format=&#39;mp4&#39;, output_params=[&#39;-f&#39;, &#39;mp4&#39;])
 
 
-def add_image(key, image, overwrite=False):
+def log_image(image, key, overwrite=False):
     &#34;&#34;&#34;
     Add an image identified by `key` to the extra keys to be logged.
 
@@ -94,7 +94,7 @@ def add_image(key, image, overwrite=False):
     experiment.add_extra_key(key, ImageArtifact(image), overwrite=overwrite)
 
 
-def add_video(key, frames, overwrite=False):
+def log_video(frames, key, overwrite=False):
     &#34;&#34;&#34;
     Add a video (sequence of frames) identified by `key` to the extra keys to be logged.
 
@@ -115,8 +115,8 @@ def add_video(key, frames, overwrite=False):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="logrun.utils.media.add_image"><code class="name flex">
-<span>def <span class="ident">add_image</span></span>(<span>key, image, overwrite=False)</span>
+<dt id="logrun.utils.media.log_image"><code class="name flex">
+<span>def <span class="ident">log_image</span></span>(<span>image, key, overwrite=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add an image identified by <code>key</code> to the extra keys to be logged.</p>
@@ -126,7 +126,7 @@ images.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_image(key, image, overwrite=False):
+<pre><code class="python">def log_image(image, key, overwrite=False):
     &#34;&#34;&#34;
     Add an image identified by `key` to the extra keys to be logged.
 
@@ -140,8 +140,8 @@ images.</p></div>
     experiment.add_extra_key(key, ImageArtifact(image), overwrite=overwrite)</code></pre>
 </details>
 </dd>
-<dt id="logrun.utils.media.add_video"><code class="name flex">
-<span>def <span class="ident">add_video</span></span>(<span>key, frames, overwrite=False)</span>
+<dt id="logrun.utils.media.log_video"><code class="name flex">
+<span>def <span class="ident">log_video</span></span>(<span>frames, key, overwrite=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a video (sequence of frames) identified by <code>key</code> to the extra keys to be logged.</p>
@@ -151,7 +151,7 @@ videos.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_video(key, frames, overwrite=False):
+<pre><code class="python">def log_video(frames, key, overwrite=False):
     &#34;&#34;&#34;
     Add a video (sequence of frames) identified by `key` to the extra keys to be logged.
 
@@ -269,8 +269,8 @@ videos.</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="logrun.utils.media.add_image" href="#logrun.utils.media.add_image">add_image</a></code></li>
-<li><code><a title="logrun.utils.media.add_video" href="#logrun.utils.media.add_video">add_video</a></code></li>
+<li><code><a title="logrun.utils.media.log_image" href="#logrun.utils.media.log_image">log_image</a></code></li>
+<li><code><a title="logrun.utils.media.log_video" href="#logrun.utils.media.log_video">log_video</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>

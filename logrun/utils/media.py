@@ -11,8 +11,8 @@ from logrun.internals import experiment, Artifact
 __all__ = [
     'ImageArtifact',
     'VideoArtifact',
-    'add_image',
-    'add_video',
+    'log_image',
+    'log_video',
 ]
 
 
@@ -51,7 +51,7 @@ class VideoArtifact(Artifact):
         imageio.mimwrite(path, self.frames, format='mp4', output_params=['-f', 'mp4'])
 
 
-def add_image(key, image, overwrite=False):
+def log_image(image, key, overwrite=False):
     """
     Add an image identified by `key` to the extra keys to be logged.
 
@@ -65,7 +65,7 @@ def add_image(key, image, overwrite=False):
     experiment.add_extra_key(key, ImageArtifact(image), overwrite=overwrite)
 
 
-def add_video(key, frames, overwrite=False):
+def log_video(frames, key, overwrite=False):
     """
     Add a video (sequence of frames) identified by `key` to the extra keys to be logged.
 

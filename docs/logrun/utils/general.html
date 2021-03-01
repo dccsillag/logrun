@@ -38,15 +38,15 @@ from logrun.internals import ensure_dir_exists as _ensure_dir_exists
 
 
 __all__ = [
-    &#39;add_input_file&#39;,
-    &#39;add_output_file&#39;,
-    &#39;add_extra&#39;,
+    &#39;log_input_file&#39;,
+    &#39;log_output_file&#39;,
+    &#39;log_extra&#39;,
     &#39;inpath&#39;,
     &#39;outpath&#39;,
 ]
 
 
-def add_input_file(path):
+def log_input_file(path):
     &#34;&#34;&#34;
     Add a given input file to be logged.
     &#34;&#34;&#34;
@@ -57,7 +57,7 @@ def add_input_file(path):
     experiment.add_input_file(path)
 
 
-def add_output_file(path):
+def log_output_file(path):
     &#34;&#34;&#34;
     Add a given output file to be logged.
     &#34;&#34;&#34;
@@ -68,7 +68,7 @@ def add_output_file(path):
     experiment.add_output_file(path)
 
 
-def add_extra(key, value):
+def log_extra(value, key):
     &#34;&#34;&#34;
     Add some additional data given by `value` under key `key`.
     &#34;&#34;&#34;
@@ -120,66 +120,6 @@ def outpath(path, ensure_dir_exists=True):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="logrun.utils.general.add_extra"><code class="name flex">
-<span>def <span class="ident">add_extra</span></span>(<span>key, value)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Add some additional data given by <code>value</code> under key <code>key</code>.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def add_extra(key, value):
-    &#34;&#34;&#34;
-    Add some additional data given by `value` under key `key`.
-    &#34;&#34;&#34;
-
-    if not isinstance(key, str):
-        raise TypeError(&#34;key must be &#39;str&#39;&#34;)
-
-    experiment.add_extra_key(key, value)</code></pre>
-</details>
-</dd>
-<dt id="logrun.utils.general.add_input_file"><code class="name flex">
-<span>def <span class="ident">add_input_file</span></span>(<span>path)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Add a given input file to be logged.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def add_input_file(path):
-    &#34;&#34;&#34;
-    Add a given input file to be logged.
-    &#34;&#34;&#34;
-
-    if not isinstance(path, (str, Path)):
-        raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
-
-    experiment.add_input_file(path)</code></pre>
-</details>
-</dd>
-<dt id="logrun.utils.general.add_output_file"><code class="name flex">
-<span>def <span class="ident">add_output_file</span></span>(<span>path)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Add a given output file to be logged.</p></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def add_output_file(path):
-    &#34;&#34;&#34;
-    Add a given output file to be logged.
-    &#34;&#34;&#34;
-
-    if not isinstance(path, (str, Path)):
-        raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
-
-    experiment.add_output_file(path)</code></pre>
-</details>
-</dd>
 <dt id="logrun.utils.general.inpath"><code class="name flex">
 <span>def <span class="ident">inpath</span></span>(<span>path)</span>
 </code></dt>
@@ -202,6 +142,66 @@ def outpath(path, ensure_dir_exists=True):
     add_input_file(path)
 
     return path</code></pre>
+</details>
+</dd>
+<dt id="logrun.utils.general.log_extra"><code class="name flex">
+<span>def <span class="ident">log_extra</span></span>(<span>value, key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add some additional data given by <code>value</code> under key <code>key</code>.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_extra(value, key):
+    &#34;&#34;&#34;
+    Add some additional data given by `value` under key `key`.
+    &#34;&#34;&#34;
+
+    if not isinstance(key, str):
+        raise TypeError(&#34;key must be &#39;str&#39;&#34;)
+
+    experiment.add_extra_key(key, value)</code></pre>
+</details>
+</dd>
+<dt id="logrun.utils.general.log_input_file"><code class="name flex">
+<span>def <span class="ident">log_input_file</span></span>(<span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add a given input file to be logged.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_input_file(path):
+    &#34;&#34;&#34;
+    Add a given input file to be logged.
+    &#34;&#34;&#34;
+
+    if not isinstance(path, (str, Path)):
+        raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
+
+    experiment.add_input_file(path)</code></pre>
+</details>
+</dd>
+<dt id="logrun.utils.general.log_output_file"><code class="name flex">
+<span>def <span class="ident">log_output_file</span></span>(<span>path)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add a given output file to be logged.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def log_output_file(path):
+    &#34;&#34;&#34;
+    Add a given output file to be logged.
+    &#34;&#34;&#34;
+
+    if not isinstance(path, (str, Path)):
+        raise TypeError(&#34;path must be either &#39;str&#39; or &#39;pathlib.Path&#39;&#34;)
+
+    experiment.add_output_file(path)</code></pre>
 </details>
 </dd>
 <dt id="logrun.utils.general.outpath"><code class="name flex">
@@ -251,10 +251,10 @@ exist, and return it.</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="logrun.utils.general.add_extra" href="#logrun.utils.general.add_extra">add_extra</a></code></li>
-<li><code><a title="logrun.utils.general.add_input_file" href="#logrun.utils.general.add_input_file">add_input_file</a></code></li>
-<li><code><a title="logrun.utils.general.add_output_file" href="#logrun.utils.general.add_output_file">add_output_file</a></code></li>
 <li><code><a title="logrun.utils.general.inpath" href="#logrun.utils.general.inpath">inpath</a></code></li>
+<li><code><a title="logrun.utils.general.log_extra" href="#logrun.utils.general.log_extra">log_extra</a></code></li>
+<li><code><a title="logrun.utils.general.log_input_file" href="#logrun.utils.general.log_input_file">log_input_file</a></code></li>
+<li><code><a title="logrun.utils.general.log_output_file" href="#logrun.utils.general.log_output_file">log_output_file</a></code></li>
 <li><code><a title="logrun.utils.general.outpath" href="#logrun.utils.general.outpath">outpath</a></code></li>
 </ul>
 </li>

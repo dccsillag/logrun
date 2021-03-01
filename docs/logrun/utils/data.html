@@ -40,9 +40,9 @@ from logrun.internals import experiment, Artifact
 __all__ = [
     &#39;NumpyArtifact&#39;,
     &#39;PandasArtifact&#39;,
-    &#39;add_ndarray&#39;,
-    &#39;add_series&#39;,
-    &#39;add_dataframe&#39;,
+    &#39;log_ndarray&#39;,
+    &#39;log_series&#39;,
+    &#39;log_dataframe&#39;,
 ]
 
 
@@ -81,7 +81,7 @@ class PandasArtifact(Artifact):
         self.data.to_hdf(path, &#39;data&#39;)
 
 
-def add_ndarray(key, array, overwrite=False):
+def log_ndarray(array, key, overwrite=False):
     &#34;&#34;&#34;
     Add a NumPy arrray identified by `key` to the extra keys to be logged.
 
@@ -95,7 +95,7 @@ def add_ndarray(key, array, overwrite=False):
     experiment.add_extra_key(key, NumpyArtifact(array), overwrite=overwrite)
 
 
-def add_series(key, series, overwrite=False):
+def log_series(series, key, overwrite=False):
     &#34;&#34;&#34;
     Add a Pandas Series identified by `key` to the extra keys to be logged.
 
@@ -111,7 +111,7 @@ def add_series(key, series, overwrite=False):
     experiment.add_extra_key(key, PandasArtifact(series), overwrite=overwrite)
 
 
-def add_dataframe(key, dataframe, overwrite=False):
+def log_dataframe(dataframe, key, overwrite=False):
     &#34;&#34;&#34;
     Add a Pandas DataFrame identified by `key` to the extra keys to be logged.
 
@@ -134,8 +134,8 @@ def add_dataframe(key, dataframe, overwrite=False):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="logrun.utils.data.add_dataframe"><code class="name flex">
-<span>def <span class="ident">add_dataframe</span></span>(<span>key, dataframe, overwrite=False)</span>
+<dt id="logrun.utils.data.log_dataframe"><code class="name flex">
+<span>def <span class="ident">log_dataframe</span></span>(<span>dataframe, key, overwrite=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a Pandas DataFrame identified by <code>key</code> to the extra keys to be logged.</p>
@@ -145,7 +145,7 @@ dataframes.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_dataframe(key, dataframe, overwrite=False):
+<pre><code class="python">def log_dataframe(dataframe, key, overwrite=False):
     &#34;&#34;&#34;
     Add a Pandas DataFrame identified by `key` to the extra keys to be logged.
 
@@ -161,8 +161,8 @@ dataframes.</p></div>
     experiment.add_extra_key(key, PandasArtifact(dataframe), overwrite=overwrite)</code></pre>
 </details>
 </dd>
-<dt id="logrun.utils.data.add_ndarray"><code class="name flex">
-<span>def <span class="ident">add_ndarray</span></span>(<span>key, array, overwrite=False)</span>
+<dt id="logrun.utils.data.log_ndarray"><code class="name flex">
+<span>def <span class="ident">log_ndarray</span></span>(<span>array, key, overwrite=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a NumPy arrray identified by <code>key</code> to the extra keys to be logged.</p>
@@ -172,7 +172,7 @@ arrays.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_ndarray(key, array, overwrite=False):
+<pre><code class="python">def log_ndarray(array, key, overwrite=False):
     &#34;&#34;&#34;
     Add a NumPy arrray identified by `key` to the extra keys to be logged.
 
@@ -186,8 +186,8 @@ arrays.</p></div>
     experiment.add_extra_key(key, NumpyArtifact(array), overwrite=overwrite)</code></pre>
 </details>
 </dd>
-<dt id="logrun.utils.data.add_series"><code class="name flex">
-<span>def <span class="ident">add_series</span></span>(<span>key, series, overwrite=False)</span>
+<dt id="logrun.utils.data.log_series"><code class="name flex">
+<span>def <span class="ident">log_series</span></span>(<span>series, key, overwrite=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a Pandas Series identified by <code>key</code> to the extra keys to be logged.</p>
@@ -197,7 +197,7 @@ series.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_series(key, series, overwrite=False):
+<pre><code class="python">def log_series(series, key, overwrite=False):
     &#34;&#34;&#34;
     Add a Pandas Series identified by `key` to the extra keys to be logged.
 
@@ -317,9 +317,9 @@ series.</p></div>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="logrun.utils.data.add_dataframe" href="#logrun.utils.data.add_dataframe">add_dataframe</a></code></li>
-<li><code><a title="logrun.utils.data.add_ndarray" href="#logrun.utils.data.add_ndarray">add_ndarray</a></code></li>
-<li><code><a title="logrun.utils.data.add_series" href="#logrun.utils.data.add_series">add_series</a></code></li>
+<li><code><a title="logrun.utils.data.log_dataframe" href="#logrun.utils.data.log_dataframe">log_dataframe</a></code></li>
+<li><code><a title="logrun.utils.data.log_ndarray" href="#logrun.utils.data.log_ndarray">log_ndarray</a></code></li>
+<li><code><a title="logrun.utils.data.log_series" href="#logrun.utils.data.log_series">log_series</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
