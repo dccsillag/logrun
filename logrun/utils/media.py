@@ -45,7 +45,7 @@ class VideoArtifact(Artifact):
 
     @staticmethod
     def read(path):
-        return np.array(imageio.mimread(frames, format='mp4'))
+        return np.array(imageio.mimread(path, format='mp4'))
 
     def write(self, path):
         imageio.mimwrite(path, self.frames, format='mp4', output_params=['-f', 'mp4'])
