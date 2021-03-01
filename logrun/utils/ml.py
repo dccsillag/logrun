@@ -15,6 +15,12 @@ __all__ = [
 
 
 class PyTorchModel(Artifact):
+    """
+    Implements how to read and write a PyTorch model.
+
+    Note that the current implementation uses `torch.load` and `torch.save`.
+    """
+
     def __init__(self, model):
         self.model = model
 
@@ -31,6 +37,10 @@ class PyTorchModel(Artifact):
 
 
 class TensorFlowModel(Artifact):
+    """
+    Implements how to read and write a TensorFlow/Keras model.
+    """
+
     def __init__(self, model):
         self.model = model
 

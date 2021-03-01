@@ -44,6 +44,12 @@ __all__ = [
 
 
 class PyTorchModel(Artifact):
+    &#34;&#34;&#34;
+    Implements how to read and write a PyTorch model.
+
+    Note that the current implementation uses `torch.load` and `torch.save`.
+    &#34;&#34;&#34;
+
     def __init__(self, model):
         self.model = model
 
@@ -60,6 +66,10 @@ class PyTorchModel(Artifact):
 
 
 class TensorFlowModel(Artifact):
+    &#34;&#34;&#34;
+    Implements how to read and write a TensorFlow/Keras model.
+    &#34;&#34;&#34;
+
     def __init__(self, model):
         self.model = model
 
@@ -194,13 +204,19 @@ the extra keys to be logged.</p></div>
 <span>(</span><span>model)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Represents that an object to be saved should be saved in a special way (instead of defaulting to
-using <code>dill</code>).</p></div>
+<div class="desc"><p>Implements how to read and write a PyTorch model.</p>
+<p>Note that the current implementation uses <code>torch.load</code> and <code>torch.save</code>.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class PyTorchModel(Artifact):
+    &#34;&#34;&#34;
+    Implements how to read and write a PyTorch model.
+
+    Note that the current implementation uses `torch.load` and `torch.save`.
+    &#34;&#34;&#34;
+
     def __init__(self, model):
         self.model = model
 
@@ -235,13 +251,16 @@ using <code>dill</code>).</p></div>
 <span>(</span><span>model)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Represents that an object to be saved should be saved in a special way (instead of defaulting to
-using <code>dill</code>).</p></div>
+<div class="desc"><p>Implements how to read and write a TensorFlow/Keras model.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">class TensorFlowModel(Artifact):
+    &#34;&#34;&#34;
+    Implements how to read and write a TensorFlow/Keras model.
+    &#34;&#34;&#34;
+
     def __init__(self, model):
         self.model = model
 

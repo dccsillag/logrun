@@ -74,7 +74,7 @@ class VideoArtifact(Artifact):
 
     @staticmethod
     def read(path):
-        return np.array(imageio.mimread(frames, format=&#39;mp4&#39;))
+        return np.array(imageio.mimread(path, format=&#39;mp4&#39;))
 
     def write(self, path):
         imageio.mimwrite(path, self.frames, format=&#39;mp4&#39;, output_params=[&#39;-f&#39;, &#39;mp4&#39;])
@@ -233,7 +233,7 @@ videos.</p></div>
 
     @staticmethod
     def read(path):
-        return np.array(imageio.mimread(frames, format=&#39;mp4&#39;))
+        return np.array(imageio.mimread(path, format=&#39;mp4&#39;))
 
     def write(self, path):
         imageio.mimwrite(path, self.frames, format=&#39;mp4&#39;, output_params=[&#39;-f&#39;, &#39;mp4&#39;])</code></pre>

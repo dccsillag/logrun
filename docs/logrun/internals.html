@@ -312,15 +312,21 @@ class Experiment:
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
-        for key, value in self.extra_keys.items():
-            path = os.path.join(extra_keys_path, key)
-            if isinstance(value, Artifact):
-                value.write(path)
-                with open(path + &#39;.read&#39;, &#39;wb&#39;) as file:
-                    dill.dump(value.read, file)
+        for base_key, base_value in self.extra_keys.items():
+            if self.multiple[base_key]:
+                keyvals = {base_key + (f&#39;.%0{len(str(len(base_value)))}d&#39;) % k: base_value[k]
+                           for k in range(len(base_value))}
             else:
-                with open(path, &#39;wb&#39;) as file:
-                    dill.dump(value, file)
+                keyvals = {base_key: base_value}
+            for key, value in keyvals.items():
+                path = os.path.join(extra_keys_path, key)
+                if isinstance(value, Artifact):
+                    value.write(path)
+                    with open(path + &#39;.read&#39;, &#39;wb&#39;) as file:
+                        dill.dump(value.read, file)
+                else:
+                    with open(path, &#39;wb&#39;) as file:
+                        dill.dump(value, file)
 
         with tarfile.open(experiment_path_targz, &#39;w:gz&#39;) as tar_handle:
             for root, _, files in os.walk(experiment_path):
@@ -626,15 +632,21 @@ def write(self, path: str):
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
-        for key, value in self.extra_keys.items():
-            path = os.path.join(extra_keys_path, key)
-            if isinstance(value, Artifact):
-                value.write(path)
-                with open(path + &#39;.read&#39;, &#39;wb&#39;) as file:
-                    dill.dump(value.read, file)
+        for base_key, base_value in self.extra_keys.items():
+            if self.multiple[base_key]:
+                keyvals = {base_key + (f&#39;.%0{len(str(len(base_value)))}d&#39;) % k: base_value[k]
+                           for k in range(len(base_value))}
             else:
-                with open(path, &#39;wb&#39;) as file:
-                    dill.dump(value, file)
+                keyvals = {base_key: base_value}
+            for key, value in keyvals.items():
+                path = os.path.join(extra_keys_path, key)
+                if isinstance(value, Artifact):
+                    value.write(path)
+                    with open(path + &#39;.read&#39;, &#39;wb&#39;) as file:
+                        dill.dump(value.read, file)
+                else:
+                    with open(path, &#39;wb&#39;) as file:
+                        dill.dump(value, file)
 
         with tarfile.open(experiment_path_targz, &#39;w:gz&#39;) as tar_handle:
             for root, _, files in os.walk(experiment_path):
@@ -847,15 +859,21 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 
     extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
-    for key, value in self.extra_keys.items():
-        path = os.path.join(extra_keys_path, key)
-        if isinstance(value, Artifact):
-            value.write(path)
-            with open(path + &#39;.read&#39;, &#39;wb&#39;) as file:
-                dill.dump(value.read, file)
+    for base_key, base_value in self.extra_keys.items():
+        if self.multiple[base_key]:
+            keyvals = {base_key + (f&#39;.%0{len(str(len(base_value)))}d&#39;) % k: base_value[k]
+                       for k in range(len(base_value))}
         else:
-            with open(path, &#39;wb&#39;) as file:
-                dill.dump(value, file)
+            keyvals = {base_key: base_value}
+        for key, value in keyvals.items():
+            path = os.path.join(extra_keys_path, key)
+            if isinstance(value, Artifact):
+                value.write(path)
+                with open(path + &#39;.read&#39;, &#39;wb&#39;) as file:
+                    dill.dump(value.read, file)
+            else:
+                with open(path, &#39;wb&#39;) as file:
+                    dill.dump(value, file)
 
     with tarfile.open(experiment_path_targz, &#39;w:gz&#39;) as tar_handle:
         for root, _, files in os.walk(experiment_path):
