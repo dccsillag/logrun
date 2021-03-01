@@ -283,15 +283,21 @@ class Experiment:
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, 'extra_keys'))
 
-        for key, value in self.extra_keys.items():
-            path = os.path.join(extra_keys_path, key)
-            if isinstance(value, Artifact):
-                value.write(path)
-                with open(path + '.read', 'wb') as file:
-                    dill.dump(value.read, file)
+        for base_key, base_value in self.extra_keys.items():
+            if self.multiple[base_key]:
+                keyvals = {base_key + (f'.%0{len(str(len(base_value)))}d') % k: base_value[k]
+                           for k in range(len(base_value))}
             else:
-                with open(path, 'wb') as file:
-                    dill.dump(value, file)
+                keyvals = {base_key: base_value}
+            for key, value in keyvals.items():
+                path = os.path.join(extra_keys_path, key)
+                if isinstance(value, Artifact):
+                    value.write(path)
+                    with open(path + '.read', 'wb') as file:
+                        dill.dump(value.read, file)
+                else:
+                    with open(path, 'wb') as file:
+                        dill.dump(value, file)
 
         with tarfile.open(experiment_path_targz, 'w:gz') as tar_handle:
             for root, _, files in os.walk(experiment_path):
