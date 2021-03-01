@@ -118,13 +118,23 @@ class Experiment:
     """
 
     uuid: str
+    """ The experiment's ID. """
     rootpath: str
+    """ Path where the experiment will be written to.
+
+    This is acquired via the `MICRLOG_ROOT` environment variable. """
 
     has_content: bool
+    """ A member variable that tracks whether there is anything to log. """
     output_files: List[str]
+    """ A list of files that the running script has produced as output. """
     input_files: List[str]
+    """ A list of files that the running script has taken as input. """
     extra_keys: Dict[str, Any]
+    """ A dictionary containing extra information to store as part of the experiment. """
     multiple: Dict[str, bool]
+    """ A dictionary denoting, for each element of `extra_keys`, whether they represent a sequence
+    of data (multiple data). """
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())

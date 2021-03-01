@@ -147,13 +147,23 @@ class Experiment:
     &#34;&#34;&#34;
 
     uuid: str
+    &#34;&#34;&#34; The experiment&#39;s ID. &#34;&#34;&#34;
     rootpath: str
+    &#34;&#34;&#34; Path where the experiment will be written to.
+
+    This is acquired via the `MICRLOG_ROOT` environment variable. &#34;&#34;&#34;
 
     has_content: bool
+    &#34;&#34;&#34; A member variable that tracks whether there is anything to log. &#34;&#34;&#34;
     output_files: List[str]
+    &#34;&#34;&#34; A list of files that the running script has produced as output. &#34;&#34;&#34;
     input_files: List[str]
+    &#34;&#34;&#34; A list of files that the running script has taken as input. &#34;&#34;&#34;
     extra_keys: Dict[str, Any]
+    &#34;&#34;&#34; A dictionary containing extra information to store as part of the experiment. &#34;&#34;&#34;
     multiple: Dict[str, bool]
+    &#34;&#34;&#34; A dictionary denoting, for each element of `extra_keys`, which one has a sequence of data
+    (multiple data). &#34;&#34;&#34;
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
@@ -467,13 +477,23 @@ def write(self, path: str):
     &#34;&#34;&#34;
 
     uuid: str
+    &#34;&#34;&#34; The experiment&#39;s ID. &#34;&#34;&#34;
     rootpath: str
+    &#34;&#34;&#34; Path where the experiment will be written to.
+
+    This is acquired via the `MICRLOG_ROOT` environment variable. &#34;&#34;&#34;
 
     has_content: bool
+    &#34;&#34;&#34; A member variable that tracks whether there is anything to log. &#34;&#34;&#34;
     output_files: List[str]
+    &#34;&#34;&#34; A list of files that the running script has produced as output. &#34;&#34;&#34;
     input_files: List[str]
+    &#34;&#34;&#34; A list of files that the running script has taken as input. &#34;&#34;&#34;
     extra_keys: Dict[str, Any]
+    &#34;&#34;&#34; A dictionary containing extra information to store as part of the experiment. &#34;&#34;&#34;
     multiple: Dict[str, bool]
+    &#34;&#34;&#34; A dictionary denoting, for each element of `extra_keys`, which one has a sequence of data
+    (multiple data). &#34;&#34;&#34;
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
@@ -660,31 +680,33 @@ def write(self, path: str):
 <dl>
 <dt id="logrun.internals.Experiment.extra_keys"><code class="name">var <span class="ident">extra_keys</span> : Dict[str, Any]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>A dictionary containing extra information to store as part of the experiment.</p></div>
 </dd>
 <dt id="logrun.internals.Experiment.has_content"><code class="name">var <span class="ident">has_content</span> : bool</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>A member variable that tracks whether there is anything to log.</p></div>
 </dd>
 <dt id="logrun.internals.Experiment.input_files"><code class="name">var <span class="ident">input_files</span> : List[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>A list of files that the running script has taken as input.</p></div>
 </dd>
 <dt id="logrun.internals.Experiment.multiple"><code class="name">var <span class="ident">multiple</span> : Dict[str, bool]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>A dictionary denoting, for each element of <code>extra_keys</code>, which one has a sequence of data
+(multiple data).</p></div>
 </dd>
 <dt id="logrun.internals.Experiment.output_files"><code class="name">var <span class="ident">output_files</span> : List[str]</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>A list of files that the running script has produced as output.</p></div>
 </dd>
 <dt id="logrun.internals.Experiment.rootpath"><code class="name">var <span class="ident">rootpath</span> : str</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Path where the experiment will be written to.</p>
+<p>This is acquired via the <code>MICRLOG_ROOT</code> environment variable.</p></div>
 </dd>
 <dt id="logrun.internals.Experiment.uuid"><code class="name">var <span class="ident">uuid</span> : str</code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>The experiment's ID.</p></div>
 </dd>
 </dl>
 <h3>Methods</h3>
