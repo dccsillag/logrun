@@ -303,6 +303,12 @@ class Experiment:
             pickle.dump({input_file: eval_checksum(input_file)
                          for input_file in self.input_files},
                         file)
+        for input_file in self.input_files:
+            input_file_repr = input_file.replace(os.sep, &#39;%&#39;)
+            os.symlink(experiment_path_targz,
+                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_infile_path,
+                                                                   input_file_repr)),
+                                    start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
@@ -394,6 +400,12 @@ using <code>dill</code>).</p></div>
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>abc.ABC</li>
+</ul>
+<h3>Subclasses</h3>
+<ul class="hlist">
+<li><a title="logrun.utils.media.ImageArtifact" href="utils/media.html#logrun.utils.media.ImageArtifact">ImageArtifact</a></li>
+<li><a title="logrun.utils.media.NumpyArtifact" href="utils/media.html#logrun.utils.media.NumpyArtifact">NumpyArtifact</a></li>
+<li><a title="logrun.utils.media.VideoArtifact" href="utils/media.html#logrun.utils.media.VideoArtifact">VideoArtifact</a></li>
 </ul>
 <h3>Methods</h3>
 <dl>
@@ -602,6 +614,12 @@ def write(self, path: str):
             pickle.dump({input_file: eval_checksum(input_file)
                          for input_file in self.input_files},
                         file)
+        for input_file in self.input_files:
+            input_file_repr = input_file.replace(os.sep, &#39;%&#39;)
+            os.symlink(experiment_path_targz,
+                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_infile_path,
+                                                                   input_file_repr)),
+                                    start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
@@ -817,6 +835,12 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
         pickle.dump({input_file: eval_checksum(input_file)
                      for input_file in self.input_files},
                     file)
+    for input_file in self.input_files:
+        input_file_repr = input_file.replace(os.sep, &#39;%&#39;)
+        os.symlink(experiment_path_targz,
+                   os.path.join(ensure_dir_exists(os.path.join(experiment_by_infile_path,
+                                                               input_file_repr)),
+                                start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
 
     extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
