@@ -31,7 +31,8 @@ import pickle
 model = ...
 ...  # your experiment, yada yada yada
 
-model.save(outpath("trained_model.pth"))
+with open(outpath("trained_model.pickle"), 'wb') as file:
+    pickle.dump(model, file)
 ```
 
 Note that you only needed to import the module and use the `outpath` function here. Everything else is neatly encapsulated in the `logrun.internals` module.
