@@ -23,6 +23,12 @@ setup(
                       'psutil',
                       'xxhash',
                       'gitpython'],
+    extras_require={
+        'utils-media': ['numpy', 'imageio'],
+        'utils-data': ['numpy', 'pandas'],
+        'utils-ml-cpu': ['tensorflow',     'torch==+cpu'],
+        'utils-ml-gpu': ['tensorflow-gpu', 'torch'],
+    }
 
     # TODO: classifiers
 )
