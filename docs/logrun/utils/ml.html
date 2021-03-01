@@ -31,13 +31,46 @@
 Experiment logging utilities for Machine Learning.
 &#34;&#34;&#34;
 
-from logrun.internals import experiment
+from logrun.internals import experiment, Artifact
 
 
 __all__ = [
+    &#39;PyTorchModel&#39;,
+    &#39;TensorFlowModel&#39;,
     &#39;add_metric&#39;,
     &#39;add_pytorch_model&#39;,
+    &#39;add_tensorflow_model&#39;,
 ]
+
+
+class PyTorchModel(Artifact):
+    def __init__(self, model):
+        self.model = model
+
+    @staticmethod
+    def read(path: str):
+        import torch
+
+        return torch.load(path)
+
+    def write(self, path: str) -&gt; None:
+        import torch
+
+        torch.save(self.model, path)
+
+
+class TensorFlowModel(Artifact):
+    def __init__(self, model):
+        self.model = model
+
+    @staticmethod
+    def read(path: str):
+        import tensorflow as tf
+
+        return tf.keras.models.load_model(path)
+
+    def write(self, path: str):
+        self.model.save(path)
 
 
 def add_metric(metric_name, value):
@@ -53,8 +86,28 @@ def add_metric(metric_name, value):
     experiment.add_extra_key(&#39;metric:&#39; + metric_name, float(value), overwrite=False)
 
 
-def add_pytorch_model(model):
-    pass # TODO</code></pre>
+def add_pytorch_model(model, key=&#39;trained_model&#39;):
+    &#34;&#34;&#34;
+    Add a trained PyTorch model `model` under key `key` (which defaults to `&#34;trained_model&#34;`) to the
+    extra keys to be logged.
+    &#34;&#34;&#34;
+
+    if not isinstance(key, str):
+        raise TypeError(&#34;key must be &#39;str&#39;&#34;)
+
+    experiment.add_extra_key(&#39;model:&#39; + key, PyTorchModel(model), overwrite=True)
+
+
+def add_tensorflow_model(model, key=&#39;trained_model&#39;):
+    &#34;&#34;&#34;
+    Add a trained TensorFlow model `model` under key `key` (which defaults to `&#34;trained_model&#34;`) to
+    the extra keys to be logged.
+    &#34;&#34;&#34;
+
+    if not isinstance(key, str):
+        raise TypeError(&#34;key must be &#39;str&#39;&#34;)
+
+    experiment.add_extra_key(&#39;model:&#39; + key, TensorFlowModel(model), overwrite=True)</code></pre>
 </details>
 </section>
 <section>
@@ -88,21 +141,135 @@ def add_pytorch_model(model):
 </details>
 </dd>
 <dt id="logrun.utils.ml.add_pytorch_model"><code class="name flex">
-<span>def <span class="ident">add_pytorch_model</span></span>(<span>model)</span>
+<span>def <span class="ident">add_pytorch_model</span></span>(<span>model, key='trained_model')</span>
 </code></dt>
 <dd>
-<div class="desc"></div>
+<div class="desc"><p>Add a trained PyTorch model <code>model</code> under key <code>key</code> (which defaults to <code>"trained_model"</code>) to the
+extra keys to be logged.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_pytorch_model(model):
-    pass # TODO</code></pre>
+<pre><code class="python">def add_pytorch_model(model, key=&#39;trained_model&#39;):
+    &#34;&#34;&#34;
+    Add a trained PyTorch model `model` under key `key` (which defaults to `&#34;trained_model&#34;`) to the
+    extra keys to be logged.
+    &#34;&#34;&#34;
+
+    if not isinstance(key, str):
+        raise TypeError(&#34;key must be &#39;str&#39;&#34;)
+
+    experiment.add_extra_key(&#39;model:&#39; + key, PyTorchModel(model), overwrite=True)</code></pre>
+</details>
+</dd>
+<dt id="logrun.utils.ml.add_tensorflow_model"><code class="name flex">
+<span>def <span class="ident">add_tensorflow_model</span></span>(<span>model, key='trained_model')</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add a trained TensorFlow model <code>model</code> under key <code>key</code> (which defaults to <code>"trained_model"</code>) to
+the extra keys to be logged.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add_tensorflow_model(model, key=&#39;trained_model&#39;):
+    &#34;&#34;&#34;
+    Add a trained TensorFlow model `model` under key `key` (which defaults to `&#34;trained_model&#34;`) to
+    the extra keys to be logged.
+    &#34;&#34;&#34;
+
+    if not isinstance(key, str):
+        raise TypeError(&#34;key must be &#39;str&#39;&#34;)
+
+    experiment.add_extra_key(&#39;model:&#39; + key, TensorFlowModel(model), overwrite=True)</code></pre>
 </details>
 </dd>
 </dl>
 </section>
 <section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="logrun.utils.ml.PyTorchModel"><code class="flex name class">
+<span>class <span class="ident">PyTorchModel</span></span>
+<span>(</span><span>model)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents that an object to be saved should be saved in a special way (instead of defaulting to
+using <code>dill</code>).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class PyTorchModel(Artifact):
+    def __init__(self, model):
+        self.model = model
+
+    @staticmethod
+    def read(path: str):
+        import torch
+
+        return torch.load(path)
+
+    def write(self, path: str) -&gt; None:
+        import torch
+
+        torch.save(self.model, path)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="logrun.internals.Artifact" href="../internals.html#logrun.internals.Artifact">Artifact</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="logrun.internals.Artifact" href="../internals.html#logrun.internals.Artifact">Artifact</a></b></code>:
+<ul class="hlist">
+<li><code><a title="logrun.internals.Artifact.read" href="../internals.html#logrun.internals.Artifact.read">read</a></code></li>
+<li><code><a title="logrun.internals.Artifact.write" href="../internals.html#logrun.internals.Artifact.write">write</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+<dt id="logrun.utils.ml.TensorFlowModel"><code class="flex name class">
+<span>class <span class="ident">TensorFlowModel</span></span>
+<span>(</span><span>model)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Represents that an object to be saved should be saved in a special way (instead of defaulting to
+using <code>dill</code>).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TensorFlowModel(Artifact):
+    def __init__(self, model):
+        self.model = model
+
+    @staticmethod
+    def read(path: str):
+        import tensorflow as tf
+
+        return tf.keras.models.load_model(path)
+
+    def write(self, path: str):
+        self.model.save(path)</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="logrun.internals.Artifact" href="../internals.html#logrun.internals.Artifact">Artifact</a></li>
+<li>abc.ABC</li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="logrun.internals.Artifact" href="../internals.html#logrun.internals.Artifact">Artifact</a></b></code>:
+<ul class="hlist">
+<li><code><a title="logrun.internals.Artifact.read" href="../internals.html#logrun.internals.Artifact.read">read</a></code></li>
+<li><code><a title="logrun.internals.Artifact.write" href="../internals.html#logrun.internals.Artifact.write">write</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
 </section>
 </article>
 <nav id="sidebar">
@@ -120,6 +287,17 @@ def add_pytorch_model(model):
 <ul class="">
 <li><code><a title="logrun.utils.ml.add_metric" href="#logrun.utils.ml.add_metric">add_metric</a></code></li>
 <li><code><a title="logrun.utils.ml.add_pytorch_model" href="#logrun.utils.ml.add_pytorch_model">add_pytorch_model</a></code></li>
+<li><code><a title="logrun.utils.ml.add_tensorflow_model" href="#logrun.utils.ml.add_tensorflow_model">add_tensorflow_model</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="logrun.utils.ml.PyTorchModel" href="#logrun.utils.ml.PyTorchModel">PyTorchModel</a></code></h4>
+</li>
+<li>
+<h4><code><a title="logrun.utils.ml.TensorFlowModel" href="#logrun.utils.ml.TensorFlowModel">TensorFlowModel</a></code></h4>
+</li>
 </ul>
 </li>
 </ul>
