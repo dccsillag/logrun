@@ -15,7 +15,7 @@ Features include:
 The following example trains a model and registers an experiment that outputed the file `trained_model.pth`:
 
 ```python
-from logrun import expath
+from logrun.utils.general import outpath
 import pickle
 
 
@@ -23,25 +23,10 @@ import pickle
 model = ...
 ...  # your experiment, yada yada yada
 
-model.save(expath("trained_model.pth"))
+model.save(outpath("trained_model.pth"))
 ```
 
-Note that you only needed to import the module and use the `expath` function here. Everything else is neatly encapsulated in the `logrun.internals` module.
-
-We also provide **(NOTE: TODO)** utils for dealing with PyTorch (and Keras?) models directly, so the code can become:
-
-```python
-from logrun.utils.general import expath, add_model
-
-
-...  # your experiment, yada yada yada
-model = ...
-...  # your experiment, yada yada yada
-
-add_model(model).save(expath("trained_model.pth"))
-```
-
-The code above, although containing a little bit more code, will also log training history data, model predictions, metrics, etc.
+Note that you only needed to import the module and use the `outpath` function here. Everything else is neatly encapsulated in the `logrun.internals` module.
 
 ## Documentation
 
