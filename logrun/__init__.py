@@ -12,3 +12,6 @@ If you want to extend `logrun`, you'll want to use the functionalities provided 
 
 from logrun import utils
 from logrun import internals
+
+
+__version__ = '0.1.1'

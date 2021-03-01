@@ -1,6 +1,11 @@
 from setuptools import setup
 import os
 
+# this won't be used, but is needed in order to import logrun successfully:
+os.environ['LOGRUN_ROOT'] = 'logrun-root-tmp'
+
+from logrun import __version__
+
 
 this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, 'README.md')) as file:
@@ -10,7 +15,7 @@ with open(os.path.join(this_directory, 'README.md')) as file:
 
 setup(
     name="logrun",
-    version="0.1.0",
+    version=__version__,
     description="A convenient experiment logging package for Python",
     long_description=long_description,
     long_description_content_type='text/markdown',
