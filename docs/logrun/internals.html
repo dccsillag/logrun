@@ -31,7 +31,7 @@
 Internal mechanisms for experiment logging.
 &#34;&#34;&#34;
 
-from typing import List, Dict, Any
+from typing import Optional, List, Dict, Any
 from abc import ABC, abstractmethod
 import sys
 import atexit
@@ -66,7 +66,7 @@ start_timestamp = time.time()
 start_datetime = datetime.datetime.now()
 
 
-def get_script_path():
+def get_script_path() -&gt; str:
     &#34;&#34;&#34;
     Returns the path to the currently running script.
     &#34;&#34;&#34;
@@ -76,7 +76,7 @@ def get_script_path():
     return path
 
 
-def ensure_dir_exists(path):
+def ensure_dir_exists(path: str) -&gt; str:
     &#34;&#34;&#34;
     Ensure that the the given path exists and is a directory. Returns the absolute path.
     &#34;&#34;&#34;
@@ -89,7 +89,8 @@ def ensure_dir_exists(path):
     return os.path.abspath(path)
 
 
-def eval_checksum(path, state=None, digest=True):
+def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) \
+        -&gt; Optional[str]:
     &#34;&#34;&#34;
     Evaluates the checksum of a given path (which can be either a file or a directory).
     &#34;&#34;&#34;
@@ -128,13 +129,13 @@ class Artifact(ABC):
     &#34;&#34;&#34;
 
     @abstractmethod
-    def write(self, path: str):
+    def write(self, path: str) -&gt; None:
         &#34;&#34;&#34;
         Write the object to the path `path`.
         &#34;&#34;&#34;
 
     @abstractmethod
-    def read(self, path: str):
+    def read(self, path: str) -&gt; Any:
         &#34;&#34;&#34;
         Read the object from the path `path`.
         &#34;&#34;&#34;
@@ -162,8 +163,8 @@ class Experiment:
     extra_keys: Dict[str, Any]
     &#34;&#34;&#34; A dictionary containing extra information to store as part of the experiment. &#34;&#34;&#34;
     multiple: Dict[str, bool]
-    &#34;&#34;&#34; A dictionary denoting, for each element of `extra_keys`, which one has a sequence of data
-    (multiple data). &#34;&#34;&#34;
+    &#34;&#34;&#34; A dictionary denoting, for each element of `extra_keys`, whether they represent a sequence
+    of data (multiple data). &#34;&#34;&#34;
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
@@ -184,7 +185,7 @@ class Experiment:
 
         self._setup_stdout_redirection(self.stdout_file, self.stderr_file)
 
-    def add_output_file(self, path):
+    def add_output_file(self, path: str) -&gt; None:
         &#34;&#34;&#34;
         Add an output file to be logged (a copy of the file is saved).
         &#34;&#34;&#34;
@@ -192,7 +193,7 @@ class Experiment:
         self.has_content = True
         self.output_files.append(path)
 
-    def add_input_file(self, path):
+    def add_input_file(self, path: str) -&gt; None:
         &#34;&#34;&#34;
         Add an input file to be logged (only its checksum is saved).
         &#34;&#34;&#34;
@@ -200,7 +201,7 @@ class Experiment:
         self.has_content = True
         self.input_files.append(path)
 
-    def add_extra_key(self, key, value, overwrite=True):
+    def add_extra_key(self, key: str, value: Any, overwrite: bool = True) -&gt; None:
         &#34;&#34;&#34;
         Add some arbitrary information to be saved with the experiment.
 
@@ -225,17 +226,17 @@ class Experiment:
             self.extra_keys[key] = value
             self.multiple[key] = False
 
-    def _setup_stdout_redirection(self, stdout_file, stderr_file):
+    def _setup_stdout_redirection(self, stdout_file: str, stderr_file: str) -&gt; None:
         tee_stdout = subprocess.Popen([&#39;tee&#39;, stdout_file], stdin=subprocess.PIPE)
         os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
         tee_stderr = subprocess.Popen([&#39;tee&#39;, stderr_file], stdin=subprocess.PIPE)
         os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
 
-    def _cleanup(self):
+    def _cleanup(self) -&gt; None:
         if os.path.exists(self.stdout_file): os.remove(self.stdout_file)
         if os.path.exists(self.stderr_file): os.remove(self.stderr_file)
 
-    def save_experiment(self):
+    def save_experiment(self) -&gt; None:
         &#34;&#34;&#34;
         Save the experiment.
         &#34;&#34;&#34;
@@ -359,7 +360,7 @@ atexit.register(experiment.save_experiment)</code></pre>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="logrun.internals.ensure_dir_exists"><code class="name flex">
-<span>def <span class="ident">ensure_dir_exists</span></span>(<span>path)</span>
+<span>def <span class="ident">ensure_dir_exists</span></span>(<span>path: str) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Ensure that the the given path exists and is a directory. Returns the absolute path.</p></div>
@@ -367,7 +368,7 @@ atexit.register(experiment.save_experiment)</code></pre>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def ensure_dir_exists(path):
+<pre><code class="python">def ensure_dir_exists(path: str) -&gt; str:
     &#34;&#34;&#34;
     Ensure that the the given path exists and is a directory. Returns the absolute path.
     &#34;&#34;&#34;
@@ -402,13 +403,13 @@ using <code>dill</code>).</p></div>
     &#34;&#34;&#34;
 
     @abstractmethod
-    def write(self, path: str):
+    def write(self, path: str) -&gt; None:
         &#34;&#34;&#34;
         Write the object to the path `path`.
         &#34;&#34;&#34;
 
     @abstractmethod
-    def read(self, path: str):
+    def read(self, path: str) -&gt; Any:
         &#34;&#34;&#34;
         Read the object from the path `path`.
         &#34;&#34;&#34;</code></pre>
@@ -429,7 +430,7 @@ using <code>dill</code>).</p></div>
 <h3>Methods</h3>
 <dl>
 <dt id="logrun.internals.Artifact.read"><code class="name flex">
-<span>def <span class="ident">read</span></span>(<span>self, path: str)</span>
+<span>def <span class="ident">read</span></span>(<span>self, path: str) ‑> Any</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Read the object from the path <code>path</code>.</p></div>
@@ -438,14 +439,14 @@ using <code>dill</code>).</p></div>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@abstractmethod
-def read(self, path: str):
+def read(self, path: str) -&gt; Any:
     &#34;&#34;&#34;
     Read the object from the path `path`.
     &#34;&#34;&#34;</code></pre>
 </details>
 </dd>
 <dt id="logrun.internals.Artifact.write"><code class="name flex">
-<span>def <span class="ident">write</span></span>(<span>self, path: str)</span>
+<span>def <span class="ident">write</span></span>(<span>self, path: str) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Write the object to the path <code>path</code>.</p></div>
@@ -454,7 +455,7 @@ def read(self, path: str):
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">@abstractmethod
-def write(self, path: str):
+def write(self, path: str) -&gt; None:
     &#34;&#34;&#34;
     Write the object to the path `path`.
     &#34;&#34;&#34;</code></pre>
@@ -492,8 +493,8 @@ def write(self, path: str):
     extra_keys: Dict[str, Any]
     &#34;&#34;&#34; A dictionary containing extra information to store as part of the experiment. &#34;&#34;&#34;
     multiple: Dict[str, bool]
-    &#34;&#34;&#34; A dictionary denoting, for each element of `extra_keys`, which one has a sequence of data
-    (multiple data). &#34;&#34;&#34;
+    &#34;&#34;&#34; A dictionary denoting, for each element of `extra_keys`, whether they represent a sequence
+    of data (multiple data). &#34;&#34;&#34;
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
@@ -514,7 +515,7 @@ def write(self, path: str):
 
         self._setup_stdout_redirection(self.stdout_file, self.stderr_file)
 
-    def add_output_file(self, path):
+    def add_output_file(self, path: str) -&gt; None:
         &#34;&#34;&#34;
         Add an output file to be logged (a copy of the file is saved).
         &#34;&#34;&#34;
@@ -522,7 +523,7 @@ def write(self, path: str):
         self.has_content = True
         self.output_files.append(path)
 
-    def add_input_file(self, path):
+    def add_input_file(self, path: str) -&gt; None:
         &#34;&#34;&#34;
         Add an input file to be logged (only its checksum is saved).
         &#34;&#34;&#34;
@@ -530,7 +531,7 @@ def write(self, path: str):
         self.has_content = True
         self.input_files.append(path)
 
-    def add_extra_key(self, key, value, overwrite=True):
+    def add_extra_key(self, key: str, value: Any, overwrite: bool = True) -&gt; None:
         &#34;&#34;&#34;
         Add some arbitrary information to be saved with the experiment.
 
@@ -555,17 +556,17 @@ def write(self, path: str):
             self.extra_keys[key] = value
             self.multiple[key] = False
 
-    def _setup_stdout_redirection(self, stdout_file, stderr_file):
+    def _setup_stdout_redirection(self, stdout_file: str, stderr_file: str) -&gt; None:
         tee_stdout = subprocess.Popen([&#39;tee&#39;, stdout_file], stdin=subprocess.PIPE)
         os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
         tee_stderr = subprocess.Popen([&#39;tee&#39;, stderr_file], stdin=subprocess.PIPE)
         os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
 
-    def _cleanup(self):
+    def _cleanup(self) -&gt; None:
         if os.path.exists(self.stdout_file): os.remove(self.stdout_file)
         if os.path.exists(self.stderr_file): os.remove(self.stderr_file)
 
-    def save_experiment(self):
+    def save_experiment(self) -&gt; None:
         &#34;&#34;&#34;
         Save the experiment.
         &#34;&#34;&#34;
@@ -692,8 +693,8 @@ def write(self, path: str):
 </dd>
 <dt id="logrun.internals.Experiment.multiple"><code class="name">var <span class="ident">multiple</span> : Dict[str, bool]</code></dt>
 <dd>
-<div class="desc"><p>A dictionary denoting, for each element of <code>extra_keys</code>, which one has a sequence of data
-(multiple data).</p></div>
+<div class="desc"><p>A dictionary denoting, for each element of <code>extra_keys</code>, whether they represent a sequence
+of data (multiple data).</p></div>
 </dd>
 <dt id="logrun.internals.Experiment.output_files"><code class="name">var <span class="ident">output_files</span> : List[str]</code></dt>
 <dd>
@@ -712,7 +713,7 @@ def write(self, path: str):
 <h3>Methods</h3>
 <dl>
 <dt id="logrun.internals.Experiment.add_extra_key"><code class="name flex">
-<span>def <span class="ident">add_extra_key</span></span>(<span>self, key, value, overwrite=True)</span>
+<span>def <span class="ident">add_extra_key</span></span>(<span>self, key: str, value: Any, overwrite: bool = True) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add some arbitrary information to be saved with the experiment.</p>
@@ -723,7 +724,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_extra_key(self, key, value, overwrite=True):
+<pre><code class="python">def add_extra_key(self, key: str, value: Any, overwrite: bool = True) -&gt; None:
     &#34;&#34;&#34;
     Add some arbitrary information to be saved with the experiment.
 
@@ -750,7 +751,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 </details>
 </dd>
 <dt id="logrun.internals.Experiment.add_input_file"><code class="name flex">
-<span>def <span class="ident">add_input_file</span></span>(<span>self, path)</span>
+<span>def <span class="ident">add_input_file</span></span>(<span>self, path: str) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add an input file to be logged (only its checksum is saved).</p></div>
@@ -758,7 +759,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_input_file(self, path):
+<pre><code class="python">def add_input_file(self, path: str) -&gt; None:
     &#34;&#34;&#34;
     Add an input file to be logged (only its checksum is saved).
     &#34;&#34;&#34;
@@ -768,7 +769,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 </details>
 </dd>
 <dt id="logrun.internals.Experiment.add_output_file"><code class="name flex">
-<span>def <span class="ident">add_output_file</span></span>(<span>self, path)</span>
+<span>def <span class="ident">add_output_file</span></span>(<span>self, path: str) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add an output file to be logged (a copy of the file is saved).</p></div>
@@ -776,7 +777,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def add_output_file(self, path):
+<pre><code class="python">def add_output_file(self, path: str) -&gt; None:
     &#34;&#34;&#34;
     Add an output file to be logged (a copy of the file is saved).
     &#34;&#34;&#34;
@@ -786,7 +787,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 </details>
 </dd>
 <dt id="logrun.internals.Experiment.save_experiment"><code class="name flex">
-<span>def <span class="ident">save_experiment</span></span>(<span>self)</span>
+<span>def <span class="ident">save_experiment</span></span>(<span>self) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Save the experiment.</p></div>
@@ -794,7 +795,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def save_experiment(self):
+<pre><code class="python">def save_experiment(self) -&gt; None:
     &#34;&#34;&#34;
     Save the experiment.
     &#34;&#34;&#34;

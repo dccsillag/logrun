@@ -2,6 +2,7 @@
 Experiment logging utilities for media (images, videos, etc.).
 """
 
+from typing import Union, Iterable
 import numpy as np
 import imageio
 
@@ -21,14 +22,14 @@ class ImageArtifact(Artifact):
     Implements how to read and write an image.
     """
 
-    def __init__(self, data):
+    def __init__(self, data: np.ndarray):
         self.data = np.asarray(data)
 
     @staticmethod
-    def read(path):
+    def read(path: str) -> None:
         return imageio.imread(path, format='png')
 
-    def write(self, path):
+    def write(self, path: str) -> None:
         imageio.imwrite(path, self.data, format='png')
 
 
@@ -37,21 +38,21 @@ class VideoArtifact(Artifact):
     Implements how to read and write a video.
     """
 
-    def __init__(self, frames):
+    def __init__(self, frames: Union[Iterable[np.ndarray], np.ndarray]):
         if isinstance(frames, np.ndarray) and frames.ndim == 3:
             self.frames = frames
         else:
             self.frames = np.array([np.asarray(frame) for frame in frames])
 
     @staticmethod
-    def read(path):
+    def read(path: str) -> None:
         return np.array(imageio.mimread(path, format='mp4'))
 
-    def write(self, path):
+    def write(self, path: str) -> None:
         imageio.mimwrite(path, self.frames, format='mp4', output_params=['-f', 'mp4'])
 
 
-def log_image(image, key, overwrite=False):
+def log_image(image: np.ndarray, key: str, overwrite: bool = False) -> None:
     """
     Add an image identified by `key` to the extra keys to be logged.
 
@@ -65,7 +66,8 @@ def log_image(image, key, overwrite=False):
     experiment.add_extra_key(key, ImageArtifact(image), overwrite=overwrite)
 
 
-def log_video(frames, key, overwrite=False):
+def log_video(frames: Union[Iterable[np.ndarray], np.ndarray], key: str, overwrite: bool = False) \
+        -> None:
     """
     Add a video (sequence of frames) identified by `key` to the extra keys to be logged.
 

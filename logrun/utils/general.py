@@ -2,6 +2,7 @@
 General experiment logging utilities.
 """
 
+from typing import Any
 from pathlib import Path
 import os
 from logrun.internals import experiment
@@ -17,7 +18,7 @@ __all__ = [
 ]
 
 
-def log_input_file(path):
+def log_input_file(path: str) -> None:
     """
     Add a given input file to be logged.
     """
@@ -28,7 +29,7 @@ def log_input_file(path):
     experiment.add_input_file(path)
 
 
-def log_output_file(path):
+def log_output_file(path: str) -> None:
     """
     Add a given output file to be logged.
     """
@@ -39,7 +40,7 @@ def log_output_file(path):
     experiment.add_output_file(path)
 
 
-def log_extra(value, key):
+def log_extra(value: Any, key: str) -> None:
     """
     Add some additional data given by `value` under key `key`.
     """
@@ -50,7 +51,7 @@ def log_extra(value, key):
     experiment.add_extra_key(key, value)
 
 
-def inpath(path):
+def inpath(path: str) -> str:
     """
     Add a given input path `path` to be logged, and return it.
     """
@@ -65,7 +66,7 @@ def inpath(path):
     return path
 
 
-def outpath(path, ensure_dir_exists=True):
+def outpath(path: str, ensure_dir_exists: bool = True) -> str:
     """
     Add a given output path `path` to be logged, create its containing directory if it does not
     exist, and return it.

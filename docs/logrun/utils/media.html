@@ -31,6 +31,7 @@
 Experiment logging utilities for media (images, videos, etc.).
 &#34;&#34;&#34;
 
+from typing import Union, Iterable
 import numpy as np
 import imageio
 
@@ -50,14 +51,14 @@ class ImageArtifact(Artifact):
     Implements how to read and write an image.
     &#34;&#34;&#34;
 
-    def __init__(self, data):
+    def __init__(self, data: np.ndarray):
         self.data = np.asarray(data)
 
     @staticmethod
-    def read(path):
+    def read(path: str) -&gt; None:
         return imageio.imread(path, format=&#39;png&#39;)
 
-    def write(self, path):
+    def write(self, path: str) -&gt; None:
         imageio.imwrite(path, self.data, format=&#39;png&#39;)
 
 
@@ -66,21 +67,21 @@ class VideoArtifact(Artifact):
     Implements how to read and write a video.
     &#34;&#34;&#34;
 
-    def __init__(self, frames):
+    def __init__(self, frames: Union[Iterable[np.ndarray], np.ndarray]):
         if isinstance(frames, np.ndarray) and frames.ndim == 3:
             self.frames = frames
         else:
             self.frames = np.array([np.asarray(frame) for frame in frames])
 
     @staticmethod
-    def read(path):
+    def read(path: str) -&gt; None:
         return np.array(imageio.mimread(path, format=&#39;mp4&#39;))
 
-    def write(self, path):
+    def write(self, path: str) -&gt; None:
         imageio.mimwrite(path, self.frames, format=&#39;mp4&#39;, output_params=[&#39;-f&#39;, &#39;mp4&#39;])
 
 
-def log_image(image, key, overwrite=False):
+def log_image(image: np.ndarray, key: str, overwrite: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Add an image identified by `key` to the extra keys to be logged.
 
@@ -94,7 +95,8 @@ def log_image(image, key, overwrite=False):
     experiment.add_extra_key(key, ImageArtifact(image), overwrite=overwrite)
 
 
-def log_video(frames, key, overwrite=False):
+def log_video(frames: Union[Iterable[np.ndarray], np.ndarray], key: str, overwrite: bool = False) \
+        -&gt; None:
     &#34;&#34;&#34;
     Add a video (sequence of frames) identified by `key` to the extra keys to be logged.
 
@@ -116,7 +118,7 @@ def log_video(frames, key, overwrite=False):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="logrun.utils.media.log_image"><code class="name flex">
-<span>def <span class="ident">log_image</span></span>(<span>image, key, overwrite=False)</span>
+<span>def <span class="ident">log_image</span></span>(<span>image: numpy.ndarray, key: str, overwrite: bool = False) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add an image identified by <code>key</code> to the extra keys to be logged.</p>
@@ -126,7 +128,7 @@ images.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_image(image, key, overwrite=False):
+<pre><code class="python">def log_image(image: np.ndarray, key: str, overwrite: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Add an image identified by `key` to the extra keys to be logged.
 
@@ -141,7 +143,7 @@ images.</p></div>
 </details>
 </dd>
 <dt id="logrun.utils.media.log_video"><code class="name flex">
-<span>def <span class="ident">log_video</span></span>(<span>frames, key, overwrite=False)</span>
+<span>def <span class="ident">log_video</span></span>(<span>frames: Union[Iterable[numpy.ndarray], numpy.ndarray], key: str, overwrite: bool = False) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a video (sequence of frames) identified by <code>key</code> to the extra keys to be logged.</p>
@@ -151,7 +153,8 @@ videos.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_video(frames, key, overwrite=False):
+<pre><code class="python">def log_video(frames: Union[Iterable[np.ndarray], np.ndarray], key: str, overwrite: bool = False) \
+        -&gt; None:
     &#34;&#34;&#34;
     Add a video (sequence of frames) identified by `key` to the extra keys to be logged.
 
@@ -172,7 +175,7 @@ videos.</p></div>
 <dl>
 <dt id="logrun.utils.media.ImageArtifact"><code class="flex name class">
 <span>class <span class="ident">ImageArtifact</span></span>
-<span>(</span><span>data)</span>
+<span>(</span><span>data: numpy.ndarray)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements how to read and write an image.</p></div>
@@ -185,14 +188,14 @@ videos.</p></div>
     Implements how to read and write an image.
     &#34;&#34;&#34;
 
-    def __init__(self, data):
+    def __init__(self, data: np.ndarray):
         self.data = np.asarray(data)
 
     @staticmethod
-    def read(path):
+    def read(path: str) -&gt; None:
         return imageio.imread(path, format=&#39;png&#39;)
 
-    def write(self, path):
+    def write(self, path: str) -&gt; None:
         imageio.imwrite(path, self.data, format=&#39;png&#39;)</code></pre>
 </details>
 <h3>Ancestors</h3>
@@ -212,7 +215,7 @@ videos.</p></div>
 </dd>
 <dt id="logrun.utils.media.VideoArtifact"><code class="flex name class">
 <span>class <span class="ident">VideoArtifact</span></span>
-<span>(</span><span>frames)</span>
+<span>(</span><span>frames: Union[Iterable[numpy.ndarray], numpy.ndarray])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements how to read and write a video.</p></div>
@@ -225,17 +228,17 @@ videos.</p></div>
     Implements how to read and write a video.
     &#34;&#34;&#34;
 
-    def __init__(self, frames):
+    def __init__(self, frames: Union[Iterable[np.ndarray], np.ndarray]):
         if isinstance(frames, np.ndarray) and frames.ndim == 3:
             self.frames = frames
         else:
             self.frames = np.array([np.asarray(frame) for frame in frames])
 
     @staticmethod
-    def read(path):
+    def read(path: str) -&gt; None:
         return np.array(imageio.mimread(path, format=&#39;mp4&#39;))
 
-    def write(self, path):
+    def write(self, path: str) -&gt; None:
         imageio.mimwrite(path, self.frames, format=&#39;mp4&#39;, output_params=[&#39;-f&#39;, &#39;mp4&#39;])</code></pre>
 </details>
 <h3>Ancestors</h3>

@@ -54,7 +54,7 @@ class PyTorchModel(Artifact):
         self.model = model
 
     @staticmethod
-    def read(path: str):
+    def read(path: str) -&gt; None:
         import torch
 
         return torch.load(path)
@@ -74,16 +74,16 @@ class TensorFlowModel(Artifact):
         self.model = model
 
     @staticmethod
-    def read(path: str):
+    def read(path: str) -&gt; None:
         import tensorflow as tf
 
         return tf.keras.models.load_model(path)
 
-    def write(self, path: str):
+    def write(self, path: str) -&gt; None:
         self.model.save(path)
 
 
-def log_metric(value, metric_name):
+def log_metric(value: float, metric_name: str) -&gt; None:
     &#34;&#34;&#34;
     Add a value `value` of a metric identified by `metric_name` to the extra keys to be logged.
 
@@ -96,7 +96,7 @@ def log_metric(value, metric_name):
     experiment.add_extra_key(&#39;metric:&#39; + metric_name, float(value), overwrite=False)
 
 
-def log_pytorch_model(model, key=&#39;trained_model&#39;):
+def log_pytorch_model(model, key: str = &#39;trained_model&#39;) -&gt; None:
     &#34;&#34;&#34;
     Add a trained PyTorch model `model` under key `key` (which defaults to `&#34;trained_model&#34;`) to the
     extra keys to be logged.
@@ -108,7 +108,7 @@ def log_pytorch_model(model, key=&#39;trained_model&#39;):
     experiment.add_extra_key(&#39;model:&#39; + key, PyTorchModel(model), overwrite=True)
 
 
-def log_tensorflow_model(model, key=&#39;trained_model&#39;):
+def log_tensorflow_model(model, key: str = &#39;trained_model&#39;) -&gt; None:
     &#34;&#34;&#34;
     Add a trained TensorFlow model `model` under key `key` (which defaults to `&#34;trained_model&#34;`) to
     the extra keys to be logged.
@@ -128,7 +128,7 @@ def log_tensorflow_model(model, key=&#39;trained_model&#39;):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="logrun.utils.ml.log_metric"><code class="name flex">
-<span>def <span class="ident">log_metric</span></span>(<span>value, metric_name)</span>
+<span>def <span class="ident">log_metric</span></span>(<span>value: float, metric_name: str) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a value <code>value</code> of a metric identified by <code>metric_name</code> to the extra keys to be logged.</p>
@@ -137,7 +137,7 @@ def log_tensorflow_model(model, key=&#39;trained_model&#39;):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_metric(value, metric_name):
+<pre><code class="python">def log_metric(value: float, metric_name: str) -&gt; None:
     &#34;&#34;&#34;
     Add a value `value` of a metric identified by `metric_name` to the extra keys to be logged.
 
@@ -151,7 +151,7 @@ def log_tensorflow_model(model, key=&#39;trained_model&#39;):
 </details>
 </dd>
 <dt id="logrun.utils.ml.log_pytorch_model"><code class="name flex">
-<span>def <span class="ident">log_pytorch_model</span></span>(<span>model, key='trained_model')</span>
+<span>def <span class="ident">log_pytorch_model</span></span>(<span>model, key: str = 'trained_model') ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a trained PyTorch model <code>model</code> under key <code>key</code> (which defaults to <code>"trained_model"</code>) to the
@@ -160,7 +160,7 @@ extra keys to be logged.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_pytorch_model(model, key=&#39;trained_model&#39;):
+<pre><code class="python">def log_pytorch_model(model, key: str = &#39;trained_model&#39;) -&gt; None:
     &#34;&#34;&#34;
     Add a trained PyTorch model `model` under key `key` (which defaults to `&#34;trained_model&#34;`) to the
     extra keys to be logged.
@@ -173,7 +173,7 @@ extra keys to be logged.</p></div>
 </details>
 </dd>
 <dt id="logrun.utils.ml.log_tensorflow_model"><code class="name flex">
-<span>def <span class="ident">log_tensorflow_model</span></span>(<span>model, key='trained_model')</span>
+<span>def <span class="ident">log_tensorflow_model</span></span>(<span>model, key: str = 'trained_model') ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a trained TensorFlow model <code>model</code> under key <code>key</code> (which defaults to <code>"trained_model"</code>) to
@@ -182,7 +182,7 @@ the extra keys to be logged.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_tensorflow_model(model, key=&#39;trained_model&#39;):
+<pre><code class="python">def log_tensorflow_model(model, key: str = &#39;trained_model&#39;) -&gt; None:
     &#34;&#34;&#34;
     Add a trained TensorFlow model `model` under key `key` (which defaults to `&#34;trained_model&#34;`) to
     the extra keys to be logged.
@@ -221,7 +221,7 @@ the extra keys to be logged.</p></div>
         self.model = model
 
     @staticmethod
-    def read(path: str):
+    def read(path: str) -&gt; None:
         import torch
 
         return torch.load(path)
@@ -265,12 +265,12 @@ the extra keys to be logged.</p></div>
         self.model = model
 
     @staticmethod
-    def read(path: str):
+    def read(path: str) -&gt; None:
         import tensorflow as tf
 
         return tf.keras.models.load_model(path)
 
-    def write(self, path: str):
+    def write(self, path: str) -&gt; None:
         self.model.save(path)</code></pre>
 </details>
 <h3>Ancestors</h3>

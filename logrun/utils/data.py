@@ -2,6 +2,7 @@
 Experiment logging utilities for data.
 """
 
+from typing import Union
 import numpy as np
 import pandas as pd
 
@@ -22,14 +23,14 @@ class NumpyArtifact(Artifact):
     Implements how to read and write a raw NumPy array.
     """
 
-    def __init__(self, data):
+    def __init__(self, data: np.ndarray):
         self.data = np.asarray(data)
 
     @staticmethod
-    def read(path):
+    def read(path: str) -> None:
         return np.load(path)
 
-    def write(self, path):
+    def write(self, path: str) -> None:
         with open(path, 'wb') as file:
             np.save(file, self.data)
 
@@ -39,20 +40,20 @@ class PandasArtifact(Artifact):
     Implements how to read and write a Pandas Series or DataFrame.
     """
 
-    def __init__(self, data):
+    def __init__(self, data: Union[pd.Series, pd.DataFrame]):
         assert isinstance(data, (pd.Series, pd.DataFrame))
 
         self.data = data
 
     @staticmethod
-    def read(path):
+    def read(path: str) -> Union[pd.Series, pd.DataFrame]:
         return pd.read_hdf(path)
 
-    def write(self, path):
+    def write(self, path: str) -> None:
         self.data.to_hdf(path, 'data')
 
 
-def log_ndarray(array, key, overwrite=False):
+def log_ndarray(array: np.ndarray, key: str, overwrite: bool = False) -> None:
     """
     Add a NumPy arrray identified by `key` to the extra keys to be logged.
 
@@ -66,7 +67,7 @@ def log_ndarray(array, key, overwrite=False):
     experiment.add_extra_key(key, NumpyArtifact(array), overwrite=overwrite)
 
 
-def log_series(series, key, overwrite=False):
+def log_series(series: pd.Series, key: str, overwrite: bool = False) -> None:
     """
     Add a Pandas Series identified by `key` to the extra keys to be logged.
 
@@ -82,7 +83,7 @@ def log_series(series, key, overwrite=False):
     experiment.add_extra_key(key, PandasArtifact(series), overwrite=overwrite)
 
 
-def log_dataframe(dataframe, key, overwrite=False):
+def log_dataframe(dataframe: pd.DataFrame, key: str, overwrite: bool = False) -> None:
     """
     Add a Pandas DataFrame identified by `key` to the extra keys to be logged.
 

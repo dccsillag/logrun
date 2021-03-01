@@ -31,6 +31,7 @@
 General experiment logging utilities.
 &#34;&#34;&#34;
 
+from typing import Any
 from pathlib import Path
 import os
 from logrun.internals import experiment
@@ -46,7 +47,7 @@ __all__ = [
 ]
 
 
-def log_input_file(path):
+def log_input_file(path: str) -&gt; None:
     &#34;&#34;&#34;
     Add a given input file to be logged.
     &#34;&#34;&#34;
@@ -57,7 +58,7 @@ def log_input_file(path):
     experiment.add_input_file(path)
 
 
-def log_output_file(path):
+def log_output_file(path: str) -&gt; None:
     &#34;&#34;&#34;
     Add a given output file to be logged.
     &#34;&#34;&#34;
@@ -68,7 +69,7 @@ def log_output_file(path):
     experiment.add_output_file(path)
 
 
-def log_extra(value, key):
+def log_extra(value: Any, key: str) -&gt; None:
     &#34;&#34;&#34;
     Add some additional data given by `value` under key `key`.
     &#34;&#34;&#34;
@@ -79,7 +80,7 @@ def log_extra(value, key):
     experiment.add_extra_key(key, value)
 
 
-def inpath(path):
+def inpath(path: str) -&gt; str:
     &#34;&#34;&#34;
     Add a given input path `path` to be logged, and return it.
     &#34;&#34;&#34;
@@ -94,7 +95,7 @@ def inpath(path):
     return path
 
 
-def outpath(path, ensure_dir_exists=True):
+def outpath(path: str, ensure_dir_exists: bool = True) -&gt; str:
     &#34;&#34;&#34;
     Add a given output path `path` to be logged, create its containing directory if it does not
     exist, and return it.
@@ -121,7 +122,7 @@ def outpath(path, ensure_dir_exists=True):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="logrun.utils.general.inpath"><code class="name flex">
-<span>def <span class="ident">inpath</span></span>(<span>path)</span>
+<span>def <span class="ident">inpath</span></span>(<span>path: str) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a given input path <code>path</code> to be logged, and return it.</p></div>
@@ -129,7 +130,7 @@ def outpath(path, ensure_dir_exists=True):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def inpath(path):
+<pre><code class="python">def inpath(path: str) -&gt; str:
     &#34;&#34;&#34;
     Add a given input path `path` to be logged, and return it.
     &#34;&#34;&#34;
@@ -145,7 +146,7 @@ def outpath(path, ensure_dir_exists=True):
 </details>
 </dd>
 <dt id="logrun.utils.general.log_extra"><code class="name flex">
-<span>def <span class="ident">log_extra</span></span>(<span>value, key)</span>
+<span>def <span class="ident">log_extra</span></span>(<span>value: Any, key: str) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add some additional data given by <code>value</code> under key <code>key</code>.</p></div>
@@ -153,7 +154,7 @@ def outpath(path, ensure_dir_exists=True):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_extra(value, key):
+<pre><code class="python">def log_extra(value: Any, key: str) -&gt; None:
     &#34;&#34;&#34;
     Add some additional data given by `value` under key `key`.
     &#34;&#34;&#34;
@@ -165,7 +166,7 @@ def outpath(path, ensure_dir_exists=True):
 </details>
 </dd>
 <dt id="logrun.utils.general.log_input_file"><code class="name flex">
-<span>def <span class="ident">log_input_file</span></span>(<span>path)</span>
+<span>def <span class="ident">log_input_file</span></span>(<span>path: str) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a given input file to be logged.</p></div>
@@ -173,7 +174,7 @@ def outpath(path, ensure_dir_exists=True):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_input_file(path):
+<pre><code class="python">def log_input_file(path: str) -&gt; None:
     &#34;&#34;&#34;
     Add a given input file to be logged.
     &#34;&#34;&#34;
@@ -185,7 +186,7 @@ def outpath(path, ensure_dir_exists=True):
 </details>
 </dd>
 <dt id="logrun.utils.general.log_output_file"><code class="name flex">
-<span>def <span class="ident">log_output_file</span></span>(<span>path)</span>
+<span>def <span class="ident">log_output_file</span></span>(<span>path: str) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a given output file to be logged.</p></div>
@@ -193,7 +194,7 @@ def outpath(path, ensure_dir_exists=True):
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_output_file(path):
+<pre><code class="python">def log_output_file(path: str) -&gt; None:
     &#34;&#34;&#34;
     Add a given output file to be logged.
     &#34;&#34;&#34;
@@ -205,7 +206,7 @@ def outpath(path, ensure_dir_exists=True):
 </details>
 </dd>
 <dt id="logrun.utils.general.outpath"><code class="name flex">
-<span>def <span class="ident">outpath</span></span>(<span>path, ensure_dir_exists=True)</span>
+<span>def <span class="ident">outpath</span></span>(<span>path: str, ensure_dir_exists: bool = True) ‑> str</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a given output path <code>path</code> to be logged, create its containing directory if it does not
@@ -214,7 +215,7 @@ exist, and return it.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def outpath(path, ensure_dir_exists=True):
+<pre><code class="python">def outpath(path: str, ensure_dir_exists: bool = True) -&gt; str:
     &#34;&#34;&#34;
     Add a given output path `path` to be logged, create its containing directory if it does not
     exist, and return it.

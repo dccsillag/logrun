@@ -2,7 +2,7 @@
 Internal mechanisms for experiment logging.
 """
 
-from typing import List, Dict, Any
+from typing import Optional, List, Dict, Any
 from abc import ABC, abstractmethod
 import sys
 import atexit
@@ -37,7 +37,7 @@ start_timestamp = time.time()
 start_datetime = datetime.datetime.now()
 
 
-def get_script_path():
+def get_script_path() -> str:
     """
     Returns the path to the currently running script.
     """
@@ -47,7 +47,7 @@ def get_script_path():
     return path
 
 
-def ensure_dir_exists(path):
+def ensure_dir_exists(path: str) -> str:
     """
     Ensure that the the given path exists and is a directory. Returns the absolute path.
     """
@@ -60,7 +60,8 @@ def ensure_dir_exists(path):
     return os.path.abspath(path)
 
 
-def eval_checksum(path, state=None, digest=True):
+def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) \
+        -> Optional[str]:
     """
     Evaluates the checksum of a given path (which can be either a file or a directory).
     """
@@ -99,13 +100,13 @@ class Artifact(ABC):
     """
 
     @abstractmethod
-    def write(self, path: str):
+    def write(self, path: str) -> None:
         """
         Write the object to the path `path`.
         """
 
     @abstractmethod
-    def read(self, path: str):
+    def read(self, path: str) -> Any:
         """
         Read the object from the path `path`.
         """
@@ -155,7 +156,7 @@ class Experiment:
 
         self._setup_stdout_redirection(self.stdout_file, self.stderr_file)
 
-    def add_output_file(self, path):
+    def add_output_file(self, path: str) -> None:
         """
         Add an output file to be logged (a copy of the file is saved).
         """
@@ -163,7 +164,7 @@ class Experiment:
         self.has_content = True
         self.output_files.append(path)
 
-    def add_input_file(self, path):
+    def add_input_file(self, path: str) -> None:
         """
         Add an input file to be logged (only its checksum is saved).
         """
@@ -171,7 +172,7 @@ class Experiment:
         self.has_content = True
         self.input_files.append(path)
 
-    def add_extra_key(self, key, value, overwrite=True):
+    def add_extra_key(self, key: str, value: Any, overwrite: bool = True) -> None:
         """
         Add some arbitrary information to be saved with the experiment.
 
@@ -196,17 +197,17 @@ class Experiment:
             self.extra_keys[key] = value
             self.multiple[key] = False
 
-    def _setup_stdout_redirection(self, stdout_file, stderr_file):
+    def _setup_stdout_redirection(self, stdout_file: str, stderr_file: str) -> None:
         tee_stdout = subprocess.Popen(['tee', stdout_file], stdin=subprocess.PIPE)
         os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
         tee_stderr = subprocess.Popen(['tee', stderr_file], stdin=subprocess.PIPE)
         os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
 
-    def _cleanup(self):
+    def _cleanup(self) -> None:
         if os.path.exists(self.stdout_file): os.remove(self.stdout_file)
         if os.path.exists(self.stderr_file): os.remove(self.stderr_file)
 
-    def save_experiment(self):
+    def save_experiment(self) -> None:
         """
         Save the experiment.
         """

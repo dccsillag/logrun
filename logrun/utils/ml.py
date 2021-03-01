@@ -25,7 +25,7 @@ class PyTorchModel(Artifact):
         self.model = model
 
     @staticmethod
-    def read(path: str):
+    def read(path: str) -> None:
         import torch
 
         return torch.load(path)
@@ -45,16 +45,16 @@ class TensorFlowModel(Artifact):
         self.model = model
 
     @staticmethod
-    def read(path: str):
+    def read(path: str) -> None:
         import tensorflow as tf
 
         return tf.keras.models.load_model(path)
 
-    def write(self, path: str):
+    def write(self, path: str) -> None:
         self.model.save(path)
 
 
-def log_metric(value, metric_name):
+def log_metric(value: float, metric_name: str) -> None:
     """
     Add a value `value` of a metric identified by `metric_name` to the extra keys to be logged.
 
@@ -67,7 +67,7 @@ def log_metric(value, metric_name):
     experiment.add_extra_key('metric:' + metric_name, float(value), overwrite=False)
 
 
-def log_pytorch_model(model, key='trained_model'):
+def log_pytorch_model(model, key: str = 'trained_model') -> None:
     """
     Add a trained PyTorch model `model` under key `key` (which defaults to `"trained_model"`) to the
     extra keys to be logged.
@@ -79,7 +79,7 @@ def log_pytorch_model(model, key='trained_model'):
     experiment.add_extra_key('model:' + key, PyTorchModel(model), overwrite=True)
 
 
-def log_tensorflow_model(model, key='trained_model'):
+def log_tensorflow_model(model, key: str = 'trained_model') -> None:
     """
     Add a trained TensorFlow model `model` under key `key` (which defaults to `"trained_model"`) to
     the extra keys to be logged.

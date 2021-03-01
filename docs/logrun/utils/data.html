@@ -31,6 +31,7 @@
 Experiment logging utilities for data.
 &#34;&#34;&#34;
 
+from typing import Union
 import numpy as np
 import pandas as pd
 
@@ -51,14 +52,14 @@ class NumpyArtifact(Artifact):
     Implements how to read and write a raw NumPy array.
     &#34;&#34;&#34;
 
-    def __init__(self, data):
+    def __init__(self, data: np.ndarray):
         self.data = np.asarray(data)
 
     @staticmethod
-    def read(path):
+    def read(path: str) -&gt; None:
         return np.load(path)
 
-    def write(self, path):
+    def write(self, path: str) -&gt; None:
         with open(path, &#39;wb&#39;) as file:
             np.save(file, self.data)
 
@@ -68,20 +69,20 @@ class PandasArtifact(Artifact):
     Implements how to read and write a Pandas Series or DataFrame.
     &#34;&#34;&#34;
 
-    def __init__(self, data):
+    def __init__(self, data: Union[pd.Series, pd.DataFrame]):
         assert isinstance(data, (pd.Series, pd.DataFrame))
 
         self.data = data
 
     @staticmethod
-    def read(path):
+    def read(path: str) -&gt; Union[pd.Series, pd.DataFrame]:
         return pd.read_hdf(path)
 
-    def write(self, path):
+    def write(self, path: str) -&gt; None:
         self.data.to_hdf(path, &#39;data&#39;)
 
 
-def log_ndarray(array, key, overwrite=False):
+def log_ndarray(array: np.ndarray, key: str, overwrite: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Add a NumPy arrray identified by `key` to the extra keys to be logged.
 
@@ -95,7 +96,7 @@ def log_ndarray(array, key, overwrite=False):
     experiment.add_extra_key(key, NumpyArtifact(array), overwrite=overwrite)
 
 
-def log_series(series, key, overwrite=False):
+def log_series(series: pd.Series, key: str, overwrite: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Add a Pandas Series identified by `key` to the extra keys to be logged.
 
@@ -111,7 +112,7 @@ def log_series(series, key, overwrite=False):
     experiment.add_extra_key(key, PandasArtifact(series), overwrite=overwrite)
 
 
-def log_dataframe(dataframe, key, overwrite=False):
+def log_dataframe(dataframe: pd.DataFrame, key: str, overwrite: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Add a Pandas DataFrame identified by `key` to the extra keys to be logged.
 
@@ -135,7 +136,7 @@ def log_dataframe(dataframe, key, overwrite=False):
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
 <dt id="logrun.utils.data.log_dataframe"><code class="name flex">
-<span>def <span class="ident">log_dataframe</span></span>(<span>dataframe, key, overwrite=False)</span>
+<span>def <span class="ident">log_dataframe</span></span>(<span>dataframe: pandas.core.frame.DataFrame, key: str, overwrite: bool = False) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a Pandas DataFrame identified by <code>key</code> to the extra keys to be logged.</p>
@@ -145,7 +146,7 @@ dataframes.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_dataframe(dataframe, key, overwrite=False):
+<pre><code class="python">def log_dataframe(dataframe: pd.DataFrame, key: str, overwrite: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Add a Pandas DataFrame identified by `key` to the extra keys to be logged.
 
@@ -162,7 +163,7 @@ dataframes.</p></div>
 </details>
 </dd>
 <dt id="logrun.utils.data.log_ndarray"><code class="name flex">
-<span>def <span class="ident">log_ndarray</span></span>(<span>array, key, overwrite=False)</span>
+<span>def <span class="ident">log_ndarray</span></span>(<span>array: numpy.ndarray, key: str, overwrite: bool = False) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a NumPy arrray identified by <code>key</code> to the extra keys to be logged.</p>
@@ -172,7 +173,7 @@ arrays.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_ndarray(array, key, overwrite=False):
+<pre><code class="python">def log_ndarray(array: np.ndarray, key: str, overwrite: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Add a NumPy arrray identified by `key` to the extra keys to be logged.
 
@@ -187,7 +188,7 @@ arrays.</p></div>
 </details>
 </dd>
 <dt id="logrun.utils.data.log_series"><code class="name flex">
-<span>def <span class="ident">log_series</span></span>(<span>series, key, overwrite=False)</span>
+<span>def <span class="ident">log_series</span></span>(<span>series: pandas.core.series.Series, key: str, overwrite: bool = False) ‑> NoneType</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Add a Pandas Series identified by <code>key</code> to the extra keys to be logged.</p>
@@ -197,7 +198,7 @@ series.</p></div>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def log_series(series, key, overwrite=False):
+<pre><code class="python">def log_series(series: pd.Series, key: str, overwrite: bool = False) -&gt; None:
     &#34;&#34;&#34;
     Add a Pandas Series identified by `key` to the extra keys to be logged.
 
@@ -220,7 +221,7 @@ series.</p></div>
 <dl>
 <dt id="logrun.utils.data.NumpyArtifact"><code class="flex name class">
 <span>class <span class="ident">NumpyArtifact</span></span>
-<span>(</span><span>data)</span>
+<span>(</span><span>data: numpy.ndarray)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements how to read and write a raw NumPy array.</p></div>
@@ -233,14 +234,14 @@ series.</p></div>
     Implements how to read and write a raw NumPy array.
     &#34;&#34;&#34;
 
-    def __init__(self, data):
+    def __init__(self, data: np.ndarray):
         self.data = np.asarray(data)
 
     @staticmethod
-    def read(path):
+    def read(path: str) -&gt; None:
         return np.load(path)
 
-    def write(self, path):
+    def write(self, path: str) -&gt; None:
         with open(path, &#39;wb&#39;) as file:
             np.save(file, self.data)</code></pre>
 </details>
@@ -261,7 +262,7 @@ series.</p></div>
 </dd>
 <dt id="logrun.utils.data.PandasArtifact"><code class="flex name class">
 <span>class <span class="ident">PandasArtifact</span></span>
-<span>(</span><span>data)</span>
+<span>(</span><span>data: Union[pandas.core.series.Series, pandas.core.frame.DataFrame])</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Implements how to read and write a Pandas Series or DataFrame.</p></div>
@@ -274,16 +275,16 @@ series.</p></div>
     Implements how to read and write a Pandas Series or DataFrame.
     &#34;&#34;&#34;
 
-    def __init__(self, data):
+    def __init__(self, data: Union[pd.Series, pd.DataFrame]):
         assert isinstance(data, (pd.Series, pd.DataFrame))
 
         self.data = data
 
     @staticmethod
-    def read(path):
+    def read(path: str) -&gt; Union[pd.Series, pd.DataFrame]:
         return pd.read_hdf(path)
 
-    def write(self, path):
+    def write(self, path: str) -&gt; None:
         self.data.to_hdf(path, &#39;data&#39;)</code></pre>
 </details>
 <h3>Ancestors</h3>
