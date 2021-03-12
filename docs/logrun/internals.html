@@ -149,10 +149,6 @@ class Experiment:
 
     uuid: str
     &#34;&#34;&#34; The experiment&#39;s ID. &#34;&#34;&#34;
-    rootpath: str
-    &#34;&#34;&#34; Path where the experiment will be written to.
-
-    This is acquired via the `MICRLOG_ROOT` environment variable. &#34;&#34;&#34;
 
     has_content: bool
     &#34;&#34;&#34; A member variable that tracks whether there is anything to log. &#34;&#34;&#34;
@@ -168,9 +164,6 @@ class Experiment:
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
-        self.rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
-        if self.rootpath is None:
-            raise OSError(&#34;Environment variable &#39;LOGRUN_ROOT&#39; is not defined!&#34;)
 
         self.has_content = False
         self.output_files = []
@@ -238,7 +231,7 @@ class Experiment:
 
     def save_experiment(self) -&gt; None:
         &#34;&#34;&#34;
-        Save the experiment.
+        Save the experiment to the path given by the `$LOGRUN_ROOT` environment variable.
         &#34;&#34;&#34;
 
         from logrun import __version__
@@ -247,22 +240,31 @@ class Experiment:
             self._cleanup()
             return
 
+        rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
+        if rootpath is None:
+            raise OSError(&#34;Environment variable &#39;LOGRUN_ROOT&#39; is not defined! Cannot save experiment.&#34;)
+
         print(&#34;[Saving experiment: %s]&#34; % self.uuid)
 
         experiment_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, &#39;all_experiments&#39;, self.uuid))
+            ensure_dir_exists(os.path.join(rootpath, &#39;all_experiments&#39;, self.uuid))
         experiment_path_targz = experiment_path + &#39;.tar.gz&#39;
         experiment_by_outfile_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, &#39;experiments_by_output_file&#39;))
+            ensure_dir_exists(os.path.join(rootpath, &#39;experiments_by_output_file&#39;))
         experiment_by_infile_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, &#39;experiments_by_input_file&#39;))
+            ensure_dir_exists(os.path.join(rootpath, &#39;experiments_by_input_file&#39;))
         experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, &#39;source&#39;))
 
         for module in sys.modules.values():
             if not module.__name__.startswith(&#39;src.&#39;):
                 continue
 
-            source_file = inspect.getsourcefile(module)
+            try:
+                source_file = inspect.getsourcefile(module)
+            except TypeError:
+                # If we are here then this module doesn&#39;t have a corresponding source file
+                # (or it&#39;s compiled).
+                continue
 
             if os.path.getmtime(source_file) &gt; start_timestamp:
                 print(&#34;Warning: source file [%s] modified since start of program execution!&#34;)
@@ -482,10 +484,6 @@ def write(self, path: str) -&gt; None:
 
     uuid: str
     &#34;&#34;&#34; The experiment&#39;s ID. &#34;&#34;&#34;
-    rootpath: str
-    &#34;&#34;&#34; Path where the experiment will be written to.
-
-    This is acquired via the `MICRLOG_ROOT` environment variable. &#34;&#34;&#34;
 
     has_content: bool
     &#34;&#34;&#34; A member variable that tracks whether there is anything to log. &#34;&#34;&#34;
@@ -501,9 +499,6 @@ def write(self, path: str) -&gt; None:
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
-        self.rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
-        if self.rootpath is None:
-            raise OSError(&#34;Environment variable &#39;LOGRUN_ROOT&#39; is not defined!&#34;)
 
         self.has_content = False
         self.output_files = []
@@ -571,7 +566,7 @@ def write(self, path: str) -&gt; None:
 
     def save_experiment(self) -&gt; None:
         &#34;&#34;&#34;
-        Save the experiment.
+        Save the experiment to the path given by the `$LOGRUN_ROOT` environment variable.
         &#34;&#34;&#34;
 
         from logrun import __version__
@@ -580,22 +575,31 @@ def write(self, path: str) -&gt; None:
             self._cleanup()
             return
 
+        rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
+        if rootpath is None:
+            raise OSError(&#34;Environment variable &#39;LOGRUN_ROOT&#39; is not defined! Cannot save experiment.&#34;)
+
         print(&#34;[Saving experiment: %s]&#34; % self.uuid)
 
         experiment_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, &#39;all_experiments&#39;, self.uuid))
+            ensure_dir_exists(os.path.join(rootpath, &#39;all_experiments&#39;, self.uuid))
         experiment_path_targz = experiment_path + &#39;.tar.gz&#39;
         experiment_by_outfile_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, &#39;experiments_by_output_file&#39;))
+            ensure_dir_exists(os.path.join(rootpath, &#39;experiments_by_output_file&#39;))
         experiment_by_infile_path = \
-            ensure_dir_exists(os.path.join(self.rootpath, &#39;experiments_by_input_file&#39;))
+            ensure_dir_exists(os.path.join(rootpath, &#39;experiments_by_input_file&#39;))
         experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, &#39;source&#39;))
 
         for module in sys.modules.values():
             if not module.__name__.startswith(&#39;src.&#39;):
                 continue
 
-            source_file = inspect.getsourcefile(module)
+            try:
+                source_file = inspect.getsourcefile(module)
+            except TypeError:
+                # If we are here then this module doesn&#39;t have a corresponding source file
+                # (or it&#39;s compiled).
+                continue
 
             if os.path.getmtime(source_file) &gt; start_timestamp:
                 print(&#34;Warning: source file [%s] modified since start of program execution!&#34;)
@@ -706,11 +710,6 @@ of data (multiple data).</p></div>
 <dd>
 <div class="desc"><p>A list of files that the running script has produced as output.</p></div>
 </dd>
-<dt id="logrun.internals.Experiment.rootpath"><code class="name">var <span class="ident">rootpath</span> : str</code></dt>
-<dd>
-<div class="desc"><p>Path where the experiment will be written to.</p>
-<p>This is acquired via the <code>MICRLOG_ROOT</code> environment variable.</p></div>
-</dd>
 <dt id="logrun.internals.Experiment.uuid"><code class="name">var <span class="ident">uuid</span> : str</code></dt>
 <dd>
 <div class="desc"><p>The experiment's ID.</p></div>
@@ -796,14 +795,14 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <span>def <span class="ident">save_experiment</span></span>(<span>self) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Save the experiment.</p></div>
+<div class="desc"><p>Save the experiment to the path given by the <code>$LOGRUN_ROOT</code> environment variable.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def save_experiment(self) -&gt; None:
     &#34;&#34;&#34;
-    Save the experiment.
+    Save the experiment to the path given by the `$LOGRUN_ROOT` environment variable.
     &#34;&#34;&#34;
 
     from logrun import __version__
@@ -812,22 +811,31 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
         self._cleanup()
         return
 
+    rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
+    if rootpath is None:
+        raise OSError(&#34;Environment variable &#39;LOGRUN_ROOT&#39; is not defined! Cannot save experiment.&#34;)
+
     print(&#34;[Saving experiment: %s]&#34; % self.uuid)
 
     experiment_path = \
-        ensure_dir_exists(os.path.join(self.rootpath, &#39;all_experiments&#39;, self.uuid))
+        ensure_dir_exists(os.path.join(rootpath, &#39;all_experiments&#39;, self.uuid))
     experiment_path_targz = experiment_path + &#39;.tar.gz&#39;
     experiment_by_outfile_path = \
-        ensure_dir_exists(os.path.join(self.rootpath, &#39;experiments_by_output_file&#39;))
+        ensure_dir_exists(os.path.join(rootpath, &#39;experiments_by_output_file&#39;))
     experiment_by_infile_path = \
-        ensure_dir_exists(os.path.join(self.rootpath, &#39;experiments_by_input_file&#39;))
+        ensure_dir_exists(os.path.join(rootpath, &#39;experiments_by_input_file&#39;))
     experiment_source_directory = ensure_dir_exists(os.path.join(experiment_path, &#39;source&#39;))
 
     for module in sys.modules.values():
         if not module.__name__.startswith(&#39;src.&#39;):
             continue
 
-        source_file = inspect.getsourcefile(module)
+        try:
+            source_file = inspect.getsourcefile(module)
+        except TypeError:
+            # If we are here then this module doesn&#39;t have a corresponding source file
+            # (or it&#39;s compiled).
+            continue
 
         if os.path.getmtime(source_file) &gt; start_timestamp:
             print(&#34;Warning: source file [%s] modified since start of program execution!&#34;)
@@ -957,7 +965,6 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <li><code><a title="logrun.internals.Experiment.input_files" href="#logrun.internals.Experiment.input_files">input_files</a></code></li>
 <li><code><a title="logrun.internals.Experiment.multiple" href="#logrun.internals.Experiment.multiple">multiple</a></code></li>
 <li><code><a title="logrun.internals.Experiment.output_files" href="#logrun.internals.Experiment.output_files">output_files</a></code></li>
-<li><code><a title="logrun.internals.Experiment.rootpath" href="#logrun.internals.Experiment.rootpath">rootpath</a></code></li>
 <li><code><a title="logrun.internals.Experiment.save_experiment" href="#logrun.internals.Experiment.save_experiment">save_experiment</a></code></li>
 <li><code><a title="logrun.internals.Experiment.uuid" href="#logrun.internals.Experiment.uuid">uuid</a></code></li>
 </ul>

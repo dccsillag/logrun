@@ -90,7 +90,7 @@ def inpath(path: str) -&gt; str:
 
     path = os.path.abspath(path)
 
-    add_input_file(path)
+    log_input_file(path)
 
     return path
 
@@ -107,9 +107,9 @@ def outpath(path: str, ensure_dir_exists: bool = True) -&gt; str:
     path = os.path.abspath(path)
 
     if ensure_dir_exists:
-        _ensure_dir_exists(path)
+        _ensure_dir_exists(os.path.dirname(path))
 
-    add_output_file(path)
+    log_output_file(path)
 
     return path</code></pre>
 </details>
@@ -140,7 +140,7 @@ def outpath(path: str, ensure_dir_exists: bool = True) -&gt; str:
 
     path = os.path.abspath(path)
 
-    add_input_file(path)
+    log_input_file(path)
 
     return path</code></pre>
 </details>
@@ -227,9 +227,9 @@ exist, and return it.</p></div>
     path = os.path.abspath(path)
 
     if ensure_dir_exists:
-        _ensure_dir_exists(path)
+        _ensure_dir_exists(os.path.dirname(path))
 
-    add_output_file(path)
+    log_output_file(path)
 
     return path</code></pre>
 </details>
