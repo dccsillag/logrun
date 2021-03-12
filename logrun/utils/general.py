@@ -78,7 +78,7 @@ def outpath(path: str, ensure_dir_exists: bool = True) -> str:
     path = os.path.abspath(path)
 
     if ensure_dir_exists:
-        _ensure_dir_exists(path)
+        _ensure_dir_exists(os.path.dirname(path))
 
     log_output_file(path)
 
