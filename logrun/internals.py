@@ -230,7 +230,12 @@ class Experiment:
             if not module.__name__.startswith('src.'):
                 continue
 
-            source_file = inspect.getsourcefile(module)
+            try:
+                source_file = inspect.getsourcefile(module)
+            except TypeError:
+                # If we are here then this module doesn't have a corresponding source file
+                # (or it's compiled).
+                continue
 
             if os.path.getmtime(source_file) > start_timestamp:
                 print("Warning: source file [%s] modified since start of program execution!")
