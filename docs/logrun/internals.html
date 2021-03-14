@@ -149,6 +149,8 @@ class Experiment:
 
     uuid: str
     &#34;&#34;&#34; The experiment&#39;s ID. &#34;&#34;&#34;
+    no_save: bool
+    &#34;&#34;&#34; If `True`, then don&#39;t save the experiment (nor setup stdout/stderr indirection). &#34;&#34;&#34;
 
     has_content: bool
     &#34;&#34;&#34; A member variable that tracks whether there is anything to log. &#34;&#34;&#34;
@@ -164,6 +166,7 @@ class Experiment:
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
+        self.no_save = hasattr(sys, &#39;ps1&#39;)  # True if in interactive shell
 
         self.has_content = False
         self.output_files = []
@@ -220,14 +223,17 @@ class Experiment:
             self.multiple[key] = False
 
     def _setup_stdout_redirection(self, stdout_file: str, stderr_file: str) -&gt; None:
-        tee_stdout = subprocess.Popen([&#39;tee&#39;, stdout_file], stdin=subprocess.PIPE)
-        os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
-        tee_stderr = subprocess.Popen([&#39;tee&#39;, stderr_file], stdin=subprocess.PIPE)
-        os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
+        if not self.no_save:
+            tee_stdout = subprocess.Popen([&#39;tee&#39;, stdout_file], stdin=subprocess.PIPE, start_new_session=True)
+            os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
+            tee_stderr = subprocess.Popen([&#39;tee&#39;, stderr_file], stdin=subprocess.PIPE, start_new_session=True)
+            os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
 
     def _cleanup(self) -&gt; None:
-        if os.path.exists(self.stdout_file): os.remove(self.stdout_file)
-        if os.path.exists(self.stderr_file): os.remove(self.stderr_file)
+        if os.path.exists(self.stdout_file):
+            os.remove(self.stdout_file)
+        if os.path.exists(self.stderr_file):
+            os.remove(self.stderr_file)
 
     def save_experiment(self) -&gt; None:
         &#34;&#34;&#34;
@@ -236,7 +242,7 @@ class Experiment:
 
         from logrun import __version__
 
-        if not self.has_content:
+        if not self.has_content or self.no_save:
             self._cleanup()
             return
 
@@ -484,6 +490,8 @@ def write(self, path: str) -&gt; None:
 
     uuid: str
     &#34;&#34;&#34; The experiment&#39;s ID. &#34;&#34;&#34;
+    no_save: bool
+    &#34;&#34;&#34; If `True`, then don&#39;t save the experiment (nor setup stdout/stderr indirection). &#34;&#34;&#34;
 
     has_content: bool
     &#34;&#34;&#34; A member variable that tracks whether there is anything to log. &#34;&#34;&#34;
@@ -499,6 +507,7 @@ def write(self, path: str) -&gt; None:
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
+        self.no_save = hasattr(sys, &#39;ps1&#39;)  # True if in interactive shell
 
         self.has_content = False
         self.output_files = []
@@ -555,14 +564,17 @@ def write(self, path: str) -&gt; None:
             self.multiple[key] = False
 
     def _setup_stdout_redirection(self, stdout_file: str, stderr_file: str) -&gt; None:
-        tee_stdout = subprocess.Popen([&#39;tee&#39;, stdout_file], stdin=subprocess.PIPE)
-        os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
-        tee_stderr = subprocess.Popen([&#39;tee&#39;, stderr_file], stdin=subprocess.PIPE)
-        os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
+        if not self.no_save:
+            tee_stdout = subprocess.Popen([&#39;tee&#39;, stdout_file], stdin=subprocess.PIPE, start_new_session=True)
+            os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
+            tee_stderr = subprocess.Popen([&#39;tee&#39;, stderr_file], stdin=subprocess.PIPE, start_new_session=True)
+            os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
 
     def _cleanup(self) -&gt; None:
-        if os.path.exists(self.stdout_file): os.remove(self.stdout_file)
-        if os.path.exists(self.stderr_file): os.remove(self.stderr_file)
+        if os.path.exists(self.stdout_file):
+            os.remove(self.stdout_file)
+        if os.path.exists(self.stderr_file):
+            os.remove(self.stderr_file)
 
     def save_experiment(self) -&gt; None:
         &#34;&#34;&#34;
@@ -571,7 +583,7 @@ def write(self, path: str) -&gt; None:
 
         from logrun import __version__
 
-        if not self.has_content:
+        if not self.has_content or self.no_save:
             self._cleanup()
             return
 
@@ -706,6 +718,10 @@ def write(self, path: str) -&gt; None:
 <div class="desc"><p>A dictionary denoting, for each element of <code>extra_keys</code>, whether they represent a sequence
 of data (multiple data).</p></div>
 </dd>
+<dt id="logrun.internals.Experiment.no_save"><code class="name">var <span class="ident">no_save</span> : bool</code></dt>
+<dd>
+<div class="desc"><p>If <code>True</code>, then don't save the experiment (nor setup stdout/stderr indirection).</p></div>
+</dd>
 <dt id="logrun.internals.Experiment.output_files"><code class="name">var <span class="ident">output_files</span> : List[str]</code></dt>
 <dd>
 <div class="desc"><p>A list of files that the running script has produced as output.</p></div>
@@ -807,7 +823,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 
     from logrun import __version__
 
-    if not self.has_content:
+    if not self.has_content or self.no_save:
         self._cleanup()
         return
 
@@ -964,6 +980,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <li><code><a title="logrun.internals.Experiment.has_content" href="#logrun.internals.Experiment.has_content">has_content</a></code></li>
 <li><code><a title="logrun.internals.Experiment.input_files" href="#logrun.internals.Experiment.input_files">input_files</a></code></li>
 <li><code><a title="logrun.internals.Experiment.multiple" href="#logrun.internals.Experiment.multiple">multiple</a></code></li>
+<li><code><a title="logrun.internals.Experiment.no_save" href="#logrun.internals.Experiment.no_save">no_save</a></code></li>
 <li><code><a title="logrun.internals.Experiment.output_files" href="#logrun.internals.Experiment.output_files">output_files</a></code></li>
 <li><code><a title="logrun.internals.Experiment.save_experiment" href="#logrun.internals.Experiment.save_experiment">save_experiment</a></code></li>
 <li><code><a title="logrun.internals.Experiment.uuid" href="#logrun.internals.Experiment.uuid">uuid</a></code></li>
