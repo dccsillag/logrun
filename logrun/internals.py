@@ -120,6 +120,8 @@ class Experiment:
 
     uuid: str
     """ The experiment's ID. """
+    no_save: bool
+    """ If `True`, then don't save the experiment (nor setup stdout/stderr indirection). """
 
     has_content: bool
     """ A member variable that tracks whether there is anything to log. """
@@ -135,6 +137,7 @@ class Experiment:
 
     def __init__(self):
         self.uuid = str(uuid.uuid4())
+        self.no_save = hasattr(sys, 'ps1')  # True if in interactive shell
 
         self.has_content = False
         self.output_files = []
@@ -191,14 +194,17 @@ class Experiment:
             self.multiple[key] = False
 
     def _setup_stdout_redirection(self, stdout_file: str, stderr_file: str) -> None:
-        tee_stdout = subprocess.Popen(['tee', stdout_file], stdin=subprocess.PIPE)
-        os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
-        tee_stderr = subprocess.Popen(['tee', stderr_file], stdin=subprocess.PIPE)
-        os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
+        if not self.no_save:
+            tee_stdout = subprocess.Popen(['tee', stdout_file], stdin=subprocess.PIPE, start_new_session=True)
+            os.dup2(tee_stdout.stdin.fileno(), sys.stdout.fileno())
+            tee_stderr = subprocess.Popen(['tee', stderr_file], stdin=subprocess.PIPE, start_new_session=True)
+            os.dup2(tee_stderr.stdin.fileno(), sys.stderr.fileno())
 
     def _cleanup(self) -> None:
-        if os.path.exists(self.stdout_file): os.remove(self.stdout_file)
-        if os.path.exists(self.stderr_file): os.remove(self.stderr_file)
+        if os.path.exists(self.stdout_file):
+            os.remove(self.stdout_file)
+        if os.path.exists(self.stderr_file):
+            os.remove(self.stderr_file)
 
     def save_experiment(self) -> None:
         """
@@ -207,7 +213,7 @@ class Experiment:
 
         from logrun import __version__
 
-        if not self.has_content:
+        if not self.has_content or self.no_save:
             self._cleanup()
             return
 
