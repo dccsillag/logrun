@@ -238,7 +238,8 @@ class Experiment:
 
             try:
                 source_file = inspect.getsourcefile(module)
-            except TypeError:
+                inspect.getsource(module)
+            except (TypeError, OSError):
                 # If we are here then this module doesn't have a corresponding source file
                 # (or it's compiled).
                 continue
