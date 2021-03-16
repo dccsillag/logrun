@@ -31,7 +31,7 @@
 Internal mechanisms for experiment logging.
 &#34;&#34;&#34;
 
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Set, Dict, Any
 from abc import ABC, abstractmethod
 import sys
 import atexit
@@ -154,9 +154,9 @@ class Experiment:
 
     has_content: bool
     &#34;&#34;&#34; A member variable that tracks whether there is anything to log. &#34;&#34;&#34;
-    output_files: List[str]
+    output_files: Set[str]
     &#34;&#34;&#34; A list of files that the running script has produced as output. &#34;&#34;&#34;
-    input_files: List[str]
+    input_files: Set[str]
     &#34;&#34;&#34; A list of files that the running script has taken as input. &#34;&#34;&#34;
     extra_keys: Dict[str, Any]
     &#34;&#34;&#34; A dictionary containing extra information to store as part of the experiment. &#34;&#34;&#34;
@@ -169,8 +169,8 @@ class Experiment:
         self.no_save = hasattr(sys, &#39;ps1&#39;)  # True if in interactive shell
 
         self.has_content = False
-        self.output_files = []
-        self.input_files = []
+        self.output_files = set()
+        self.input_files = set()
         self.extra_keys = {}
         self.multiple = {}
 
@@ -187,7 +187,7 @@ class Experiment:
         &#34;&#34;&#34;
 
         self.has_content = True
-        self.output_files.append(path)
+        self.output_files.add(path)
 
     def add_input_file(self, path: str) -&gt; None:
         &#34;&#34;&#34;
@@ -195,7 +195,7 @@ class Experiment:
         &#34;&#34;&#34;
 
         self.has_content = True
-        self.input_files.append(path)
+        self.input_files.add(path)
 
     def add_extra_key(self, key: str, value: Any, overwrite: bool = True) -&gt; None:
         &#34;&#34;&#34;
@@ -267,7 +267,8 @@ class Experiment:
 
             try:
                 source_file = inspect.getsourcefile(module)
-            except TypeError:
+                inspect.getsource(module)
+            except (TypeError, OSError):
                 # If we are here then this module doesn&#39;t have a corresponding source file
                 # (or it&#39;s compiled).
                 continue
@@ -495,9 +496,9 @@ def write(self, path: str) -&gt; None:
 
     has_content: bool
     &#34;&#34;&#34; A member variable that tracks whether there is anything to log. &#34;&#34;&#34;
-    output_files: List[str]
+    output_files: Set[str]
     &#34;&#34;&#34; A list of files that the running script has produced as output. &#34;&#34;&#34;
-    input_files: List[str]
+    input_files: Set[str]
     &#34;&#34;&#34; A list of files that the running script has taken as input. &#34;&#34;&#34;
     extra_keys: Dict[str, Any]
     &#34;&#34;&#34; A dictionary containing extra information to store as part of the experiment. &#34;&#34;&#34;
@@ -510,8 +511,8 @@ def write(self, path: str) -&gt; None:
         self.no_save = hasattr(sys, &#39;ps1&#39;)  # True if in interactive shell
 
         self.has_content = False
-        self.output_files = []
-        self.input_files = []
+        self.output_files = set()
+        self.input_files = set()
         self.extra_keys = {}
         self.multiple = {}
 
@@ -528,7 +529,7 @@ def write(self, path: str) -&gt; None:
         &#34;&#34;&#34;
 
         self.has_content = True
-        self.output_files.append(path)
+        self.output_files.add(path)
 
     def add_input_file(self, path: str) -&gt; None:
         &#34;&#34;&#34;
@@ -536,7 +537,7 @@ def write(self, path: str) -&gt; None:
         &#34;&#34;&#34;
 
         self.has_content = True
-        self.input_files.append(path)
+        self.input_files.add(path)
 
     def add_extra_key(self, key: str, value: Any, overwrite: bool = True) -&gt; None:
         &#34;&#34;&#34;
@@ -608,7 +609,8 @@ def write(self, path: str) -&gt; None:
 
             try:
                 source_file = inspect.getsourcefile(module)
-            except TypeError:
+                inspect.getsource(module)
+            except (TypeError, OSError):
                 # If we are here then this module doesn&#39;t have a corresponding source file
                 # (or it&#39;s compiled).
                 continue
@@ -709,7 +711,7 @@ def write(self, path: str) -&gt; None:
 <dd>
 <div class="desc"><p>A member variable that tracks whether there is anything to log.</p></div>
 </dd>
-<dt id="logrun.internals.Experiment.input_files"><code class="name">var <span class="ident">input_files</span> : List[str]</code></dt>
+<dt id="logrun.internals.Experiment.input_files"><code class="name">var <span class="ident">input_files</span> : Set[str]</code></dt>
 <dd>
 <div class="desc"><p>A list of files that the running script has taken as input.</p></div>
 </dd>
@@ -722,7 +724,7 @@ of data (multiple data).</p></div>
 <dd>
 <div class="desc"><p>If <code>True</code>, then don't save the experiment (nor setup stdout/stderr indirection).</p></div>
 </dd>
-<dt id="logrun.internals.Experiment.output_files"><code class="name">var <span class="ident">output_files</span> : List[str]</code></dt>
+<dt id="logrun.internals.Experiment.output_files"><code class="name">var <span class="ident">output_files</span> : Set[str]</code></dt>
 <dd>
 <div class="desc"><p>A list of files that the running script has produced as output.</p></div>
 </dd>
@@ -786,7 +788,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
     &#34;&#34;&#34;
 
     self.has_content = True
-    self.input_files.append(path)</code></pre>
+    self.input_files.add(path)</code></pre>
 </details>
 </dd>
 <dt id="logrun.internals.Experiment.add_output_file"><code class="name flex">
@@ -804,7 +806,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
     &#34;&#34;&#34;
 
     self.has_content = True
-    self.output_files.append(path)</code></pre>
+    self.output_files.add(path)</code></pre>
 </details>
 </dd>
 <dt id="logrun.internals.Experiment.save_experiment"><code class="name flex">
@@ -848,7 +850,8 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 
         try:
             source_file = inspect.getsourcefile(module)
-        except TypeError:
+            inspect.getsource(module)
+        except (TypeError, OSError):
             # If we are here then this module doesn&#39;t have a corresponding source file
             # (or it&#39;s compiled).
             continue
