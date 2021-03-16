@@ -11,4 +11,4 @@ If you want to extend `logrun`, you'll want to use the functionalities provided 
 """
 
 
-__version__ = '0.1.5'
+__version__ = '0.1.6'
