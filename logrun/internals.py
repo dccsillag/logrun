@@ -2,7 +2,7 @@
 Internal mechanisms for experiment logging.
 """
 
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Set, Dict, Any
 from abc import ABC, abstractmethod
 import sys
 import atexit
@@ -125,9 +125,9 @@ class Experiment:
 
     has_content: bool
     """ A member variable that tracks whether there is anything to log. """
-    output_files: List[str]
+    output_files: Set[str]
     """ A list of files that the running script has produced as output. """
-    input_files: List[str]
+    input_files: Set[str]
     """ A list of files that the running script has taken as input. """
     extra_keys: Dict[str, Any]
     """ A dictionary containing extra information to store as part of the experiment. """
@@ -140,8 +140,8 @@ class Experiment:
         self.no_save = hasattr(sys, 'ps1')  # True if in interactive shell
 
         self.has_content = False
-        self.output_files = []
-        self.input_files = []
+        self.output_files = set()
+        self.input_files = set()
         self.extra_keys = {}
         self.multiple = {}
 
@@ -158,7 +158,7 @@ class Experiment:
         """
 
         self.has_content = True
-        self.output_files.append(path)
+        self.output_files.add(path)
 
     def add_input_file(self, path: str) -> None:
         """
@@ -166,7 +166,7 @@ class Experiment:
         """
 
         self.has_content = True
-        self.input_files.append(path)
+        self.input_files.add(path)
 
     def add_extra_key(self, key: str, value: Any, overwrite: bool = True) -> None:
         """
