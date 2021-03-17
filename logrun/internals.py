@@ -65,7 +65,7 @@ def ensure_dir_exists(path: str) -> str:
 def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) \
         -> Optional[str]:
     """
-    Evaluates the checksum of a given path (which can be either a file or a directory).
+    Evaluates the checksum of the contents of a given path (which can be either a file or a directory).
     """
 
     path = os.path.abspath(os.path.realpath(path))
