@@ -27,7 +27,9 @@ import git
 
 __all__ = [
     'Artifact',
+    'get_script_path',
     'ensure_dir_exists',
+    'eval_checksum',
     'Experiment',
     'experiment',
 ]

@@ -56,7 +56,9 @@ import git
 
 __all__ = [
     &#39;Artifact&#39;,
+    &#39;get_script_path&#39;,
     &#39;ensure_dir_exists&#39;,
+    &#39;eval_checksum&#39;,
     &#39;Experiment&#39;,
     &#39;experiment&#39;,
 ]
@@ -391,6 +393,67 @@ atexit.register(experiment.save_experiment)</code></pre>
         os.makedirs(path)
 
     return os.path.abspath(path)</code></pre>
+</details>
+</dd>
+<dt id="logrun.internals.eval_checksum"><code class="name flex">
+<span>def <span class="ident">eval_checksum</span></span>(<span>path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) ‑> Optional[str]</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Evaluates the checksum of a given path (which can be either a file or a directory).</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) \
+        -&gt; Optional[str]:
+    &#34;&#34;&#34;
+    Evaluates the checksum of a given path (which can be either a file or a directory).
+    &#34;&#34;&#34;
+
+    path = os.path.abspath(os.path.realpath(path))
+
+    if state is None:
+        state = xxhash.xxh3_64()
+
+    if os.path.isfile(path):
+        filesize = os.path.getsize(path)
+        available_memory = psutil.virtual_memory().available
+        if 10*filesize &lt;= available_memory:
+            with open(path, &#39;rb&#39;) as file:
+                state.update(file.read())
+        else:
+            chunksize = max(available_memory//10, state.block_size)
+            with open(path, &#39;rb&#39;) as file:
+                while True:
+                    chunk = file.read(chunksize)
+                    if not chunk:
+                        break
+                    state.update(chunk)
+    elif os.path.isdir(path):
+        for child in os.listdir(path):
+            eval_checksum(os.path.join(path, child), state=state, digest=False)
+
+    if digest:
+        return state.hexdigest()</code></pre>
+</details>
+</dd>
+<dt id="logrun.internals.get_script_path"><code class="name flex">
+<span>def <span class="ident">get_script_path</span></span>(<span>) ‑> str</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns the path to the currently running script.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_script_path() -&gt; str:
+    &#34;&#34;&#34;
+    Returns the path to the currently running script.
+    &#34;&#34;&#34;
+
+    path = os.path.abspath(sys.argv[0])
+    assert os.path.exists(path)
+    return path</code></pre>
 </details>
 </dd>
 </dl>
@@ -962,6 +1025,8 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="logrun.internals.ensure_dir_exists" href="#logrun.internals.ensure_dir_exists">ensure_dir_exists</a></code></li>
+<li><code><a title="logrun.internals.eval_checksum" href="#logrun.internals.eval_checksum">eval_checksum</a></code></li>
+<li><code><a title="logrun.internals.get_script_path" href="#logrun.internals.get_script_path">get_script_path</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-classes">Classes</a></h3>
