@@ -47,6 +47,8 @@ import time
 import datetime
 import uuid
 import pickle
+import json
+import warnings
 
 import xxhash
 import psutil
@@ -91,16 +93,22 @@ def ensure_dir_exists(path: str) -&gt; str:
     return os.path.abspath(path)
 
 
-def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) \
+def eval_checksum(path: str,
+                  state: Optional[xxhash.xxh3_64] = None,
+                  digest: bool = True,
+                  base_path: Optional[str] = None) \
         -&gt; Optional[str]:
     &#34;&#34;&#34;
     Evaluates the checksum of the contents of a given path (which can be either a file or a directory).
     &#34;&#34;&#34;
 
     path = os.path.abspath(os.path.realpath(path))
+    base_path = base_path or (path if os.path.isdir(path) else os.path.dirname(path))
 
     if state is None:
         state = xxhash.xxh3_64()
+
+    state.update(os.path.relpath(path, base_path))
 
     if os.path.isfile(path):
         filesize = os.path.getsize(path)
@@ -117,8 +125,8 @@ def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: boo
                         break
                     state.update(chunk)
     elif os.path.isdir(path):
-        for child in os.listdir(path):
-            eval_checksum(os.path.join(path, child), state=state, digest=False)
+        for child in sorted(os.listdir(path)):
+            eval_checksum(os.path.join(path, child), state=state, digest=False, base_path=base_path)
 
     if digest:
         return state.hexdigest()
@@ -237,9 +245,25 @@ class Experiment:
         if os.path.exists(self.stderr_file):
             os.remove(self.stderr_file)
 
+    def _get_root_path(self) -&gt; str:
+        rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
+        if rootpath is not None:
+            return rootpath
+
+        if os.path.isfile(&#39;.logrun.json&#39;):
+            with open(&#39;.logrun.json&#39;) as file:
+                data = json.load(file)
+            rootpath = data.get(&#39;logrun-root&#39;)
+            if rootpath is not None:
+                return rootpath
+
+        DEFAULT_NAME = &#39;logrun-logs.tmp&#39;
+        warnings.warn(f&#34;No place to save the experiments was given -- defaulting to `{DEFAULT_NAME}`.&#34;)
+        return DEFAULT_NAME
+
     def save_experiment(self) -&gt; None:
         &#34;&#34;&#34;
-        Save the experiment to the path given by the `$LOGRUN_ROOT` environment variable.
+        Save the experiment to the experiment root path.
         &#34;&#34;&#34;
 
         from logrun import __version__
@@ -248,9 +272,7 @@ class Experiment:
             self._cleanup()
             return
 
-        rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
-        if rootpath is None:
-            raise OSError(&#34;Environment variable &#39;LOGRUN_ROOT&#39; is not defined! Cannot save experiment.&#34;)
+        rootpath = self._get_root_path()
 
         print(&#34;[Saving experiment: %s]&#34; % self.uuid)
 
@@ -320,20 +342,16 @@ class Experiment:
 
             output_file_repr = output_file.replace(os.sep, &#39;%&#39;)
             shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
-            os.symlink(experiment_path_targz,
-                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_outfile_path,
-                                                                   output_file_repr)),
-                                    start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
+            with open(os.path.join(experiment_by_outfile_path, output_file_repr), &#39;a&#39;) as file:
+                print(self.uuid, file=file)
         with open(os.path.join(experiment_path, &#39;input_files.pickle&#39;), &#39;wb&#39;) as file:
             pickle.dump({input_file: eval_checksum(input_file)
                          for input_file in self.input_files},
                         file)
         for input_file in self.input_files:
             input_file_repr = input_file.replace(os.sep, &#39;%&#39;)
-            os.symlink(experiment_path_targz,
-                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_infile_path,
-                                                                   input_file_repr)),
-                                    start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
+            with open(os.path.join(experiment_by_infile_path, input_file_repr), &#39;a&#39;) as file:
+                print(self.uuid, file=file)
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
@@ -396,7 +414,7 @@ atexit.register(experiment.save_experiment)</code></pre>
 </details>
 </dd>
 <dt id="logrun.internals.eval_checksum"><code class="name flex">
-<span>def <span class="ident">eval_checksum</span></span>(<span>path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) ‑> Optional[str]</span>
+<span>def <span class="ident">eval_checksum</span></span>(<span>path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True, base_path: Optional[str] = None) ‑> Optional[str]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Evaluates the checksum of the contents of a given path (which can be either a file or a directory).</p></div>
@@ -404,16 +422,22 @@ atexit.register(experiment.save_experiment)</code></pre>
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) \
+<pre><code class="python">def eval_checksum(path: str,
+                  state: Optional[xxhash.xxh3_64] = None,
+                  digest: bool = True,
+                  base_path: Optional[str] = None) \
         -&gt; Optional[str]:
     &#34;&#34;&#34;
     Evaluates the checksum of the contents of a given path (which can be either a file or a directory).
     &#34;&#34;&#34;
 
     path = os.path.abspath(os.path.realpath(path))
+    base_path = base_path or (path if os.path.isdir(path) else os.path.dirname(path))
 
     if state is None:
         state = xxhash.xxh3_64()
+
+    state.update(os.path.relpath(path, base_path))
 
     if os.path.isfile(path):
         filesize = os.path.getsize(path)
@@ -430,8 +454,8 @@ atexit.register(experiment.save_experiment)</code></pre>
                         break
                     state.update(chunk)
     elif os.path.isdir(path):
-        for child in os.listdir(path):
-            eval_checksum(os.path.join(path, child), state=state, digest=False)
+        for child in sorted(os.listdir(path)):
+            eval_checksum(os.path.join(path, child), state=state, digest=False, base_path=base_path)
 
     if digest:
         return state.hexdigest()</code></pre>
@@ -640,9 +664,25 @@ def write(self, path: str) -&gt; None:
         if os.path.exists(self.stderr_file):
             os.remove(self.stderr_file)
 
+    def _get_root_path(self) -&gt; str:
+        rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
+        if rootpath is not None:
+            return rootpath
+
+        if os.path.isfile(&#39;.logrun.json&#39;):
+            with open(&#39;.logrun.json&#39;) as file:
+                data = json.load(file)
+            rootpath = data.get(&#39;logrun-root&#39;)
+            if rootpath is not None:
+                return rootpath
+
+        DEFAULT_NAME = &#39;logrun-logs.tmp&#39;
+        warnings.warn(f&#34;No place to save the experiments was given -- defaulting to `{DEFAULT_NAME}`.&#34;)
+        return DEFAULT_NAME
+
     def save_experiment(self) -&gt; None:
         &#34;&#34;&#34;
-        Save the experiment to the path given by the `$LOGRUN_ROOT` environment variable.
+        Save the experiment to the experiment root path.
         &#34;&#34;&#34;
 
         from logrun import __version__
@@ -651,9 +691,7 @@ def write(self, path: str) -&gt; None:
             self._cleanup()
             return
 
-        rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
-        if rootpath is None:
-            raise OSError(&#34;Environment variable &#39;LOGRUN_ROOT&#39; is not defined! Cannot save experiment.&#34;)
+        rootpath = self._get_root_path()
 
         print(&#34;[Saving experiment: %s]&#34; % self.uuid)
 
@@ -723,20 +761,16 @@ def write(self, path: str) -&gt; None:
 
             output_file_repr = output_file.replace(os.sep, &#39;%&#39;)
             shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
-            os.symlink(experiment_path_targz,
-                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_outfile_path,
-                                                                   output_file_repr)),
-                                    start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
+            with open(os.path.join(experiment_by_outfile_path, output_file_repr), &#39;a&#39;) as file:
+                print(self.uuid, file=file)
         with open(os.path.join(experiment_path, &#39;input_files.pickle&#39;), &#39;wb&#39;) as file:
             pickle.dump({input_file: eval_checksum(input_file)
                          for input_file in self.input_files},
                         file)
         for input_file in self.input_files:
             input_file_repr = input_file.replace(os.sep, &#39;%&#39;)
-            os.symlink(experiment_path_targz,
-                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_infile_path,
-                                                                   input_file_repr)),
-                                    start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
+            with open(os.path.join(experiment_by_infile_path, input_file_repr), &#39;a&#39;) as file:
+                print(self.uuid, file=file)
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
@@ -876,14 +910,14 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 <span>def <span class="ident">save_experiment</span></span>(<span>self) ‑> NoneType</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Save the experiment to the path given by the <code>$LOGRUN_ROOT</code> environment variable.</p></div>
+<div class="desc"><p>Save the experiment to the experiment root path.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">def save_experiment(self) -&gt; None:
     &#34;&#34;&#34;
-    Save the experiment to the path given by the `$LOGRUN_ROOT` environment variable.
+    Save the experiment to the experiment root path.
     &#34;&#34;&#34;
 
     from logrun import __version__
@@ -892,9 +926,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
         self._cleanup()
         return
 
-    rootpath = os.environ.get(&#39;LOGRUN_ROOT&#39;)
-    if rootpath is None:
-        raise OSError(&#34;Environment variable &#39;LOGRUN_ROOT&#39; is not defined! Cannot save experiment.&#34;)
+    rootpath = self._get_root_path()
 
     print(&#34;[Saving experiment: %s]&#34; % self.uuid)
 
@@ -964,20 +996,16 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
 
         output_file_repr = output_file.replace(os.sep, &#39;%&#39;)
         shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
-        os.symlink(experiment_path_targz,
-                   os.path.join(ensure_dir_exists(os.path.join(experiment_by_outfile_path,
-                                                               output_file_repr)),
-                                start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
+        with open(os.path.join(experiment_by_outfile_path, output_file_repr), &#39;a&#39;) as file:
+            print(self.uuid, file=file)
     with open(os.path.join(experiment_path, &#39;input_files.pickle&#39;), &#39;wb&#39;) as file:
         pickle.dump({input_file: eval_checksum(input_file)
                      for input_file in self.input_files},
                     file)
     for input_file in self.input_files:
         input_file_repr = input_file.replace(os.sep, &#39;%&#39;)
-        os.symlink(experiment_path_targz,
-                   os.path.join(ensure_dir_exists(os.path.join(experiment_by_infile_path,
-                                                               input_file_repr)),
-                                start_datetime.strftime(&#39;%Y-%m-%d-%H-%M-%S&#39;) + &#39;.&#39; + self.uuid))
+        with open(os.path.join(experiment_by_infile_path, input_file_repr), &#39;a&#39;) as file:
+            print(self.uuid, file=file)
 
     extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, &#39;extra_keys&#39;))
 
