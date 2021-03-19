@@ -18,6 +18,8 @@ import time
 import datetime
 import uuid
 import pickle
+import json
+import warnings
 
 import xxhash
 import psutil
@@ -215,9 +217,25 @@ class Experiment:
         if os.path.exists(self.stderr_file):
             os.remove(self.stderr_file)
 
+    def _get_root_path(self) -> str:
+        rootpath = os.environ.get('LOGRUN_ROOT')
+        if rootpath is not None:
+            return rootpath
+
+        if os.path.isfile('.logrun.json'):
+            with open('.logrun.json') as file:
+                data = json.load(file)
+            rootpath = data.get('logrun-root')
+            if rootpath is not None:
+                return rootpath
+
+        DEFAULT_NAME = 'logrun-logs.tmp'
+        warnings.warn(f"No place to save the experiments was given -- defaulting to `{DEFAULT_NAME}`.")
+        return DEFAULT_NAME
+
     def save_experiment(self) -> None:
         """
-        Save the experiment to the path given by the `$LOGRUN_ROOT` environment variable.
+        Save the experiment to the experiment root path.
         """
 
         from logrun import __version__
@@ -226,9 +244,7 @@ class Experiment:
             self._cleanup()
             return
 
-        rootpath = os.environ.get('LOGRUN_ROOT')
-        if rootpath is None:
-            raise OSError("Environment variable 'LOGRUN_ROOT' is not defined! Cannot save experiment.")
+        rootpath = self._get_root_path()
 
         print("[Saving experiment: %s]" % self.uuid)
 
