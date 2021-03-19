@@ -298,20 +298,16 @@ class Experiment:
 
             output_file_repr = output_file.replace(os.sep, '%')
             shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
-            os.symlink(experiment_path_targz,
-                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_outfile_path,
-                                                                   output_file_repr)),
-                                    start_datetime.strftime('%Y-%m-%d-%H-%M-%S') + '.' + self.uuid))
+            with open(os.path.join(experiment_by_outfile_path, output_file_repr), 'a') as file:
+                print(self.uuid, file=file)
         with open(os.path.join(experiment_path, 'input_files.pickle'), 'wb') as file:
             pickle.dump({input_file: eval_checksum(input_file)
                          for input_file in self.input_files},
                         file)
         for input_file in self.input_files:
             input_file_repr = input_file.replace(os.sep, '%')
-            os.symlink(experiment_path_targz,
-                       os.path.join(ensure_dir_exists(os.path.join(experiment_by_infile_path,
-                                                                   input_file_repr)),
-                                    start_datetime.strftime('%Y-%m-%d-%H-%M-%S') + '.' + self.uuid))
+            with open(os.path.join(experiment_by_infile_path, input_file_repr), 'a') as file:
+                print(self.uuid, file=file)
 
         extra_keys_path = ensure_dir_exists(os.path.join(experiment_path, 'extra_keys'))
 
