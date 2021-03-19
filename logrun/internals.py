@@ -79,7 +79,6 @@ def eval_checksum(path: str,
     if state is None:
         state = xxhash.xxh3_64()
 
-    print("adding input file:", os.path.relpath(path, base_path))
     state.update(os.path.relpath(path, base_path))
 
     if os.path.isfile(path):
