@@ -62,16 +62,23 @@ def ensure_dir_exists(path: str) -> str:
     return os.path.abspath(path)
 
 
-def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: bool = True) \
+def eval_checksum(path: str,
+                  state: Optional[xxhash.xxh3_64] = None,
+                  digest: bool = True,
+                  base_path: Optional[str] = None) \
         -> Optional[str]:
     """
     Evaluates the checksum of the contents of a given path (which can be either a file or a directory).
     """
 
     path = os.path.abspath(os.path.realpath(path))
+    base_path = base_path or (path if os.path.isdir(path) else os.path.dirname(path))
 
     if state is None:
         state = xxhash.xxh3_64()
+
+    print("adding input file:", os.path.relpath(path, base_path))
+    state.update(os.path.relpath(path, base_path))
 
     if os.path.isfile(path):
         filesize = os.path.getsize(path)
@@ -88,8 +95,8 @@ def eval_checksum(path: str, state: Optional[xxhash.xxh3_64] = None, digest: boo
                         break
                     state.update(chunk)
     elif os.path.isdir(path):
-        for child in os.listdir(path):
-            eval_checksum(os.path.join(path, child), state=state, digest=False)
+        for child in sorted(os.listdir(path)):
+            eval_checksum(os.path.join(path, child), state=state, digest=False, base_path=base_path)
 
     if digest:
         return state.hexdigest()
