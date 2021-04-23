@@ -306,7 +306,7 @@ class Experiment:
                 file.write(inspect.getsource(module))
         source_file = sys.argv[0]
         if os.path.getmtime(source_file) &gt; start_timestamp:
-            print(&#34;Warning: script file [%s] modified since start of execution!&#34;)
+            print(&#34;Warning: script file [%s] modified since start of execution!&#34; % source_file)
         with open(os.path.join(experiment_source_directory,
                                os.path.relpath(source_file).replace(os.sep, &#39;%&#39;)), &#39;w&#39;) as file:
             with open(source_file) as scriptfile:
@@ -725,7 +725,7 @@ def write(self, path: str) -&gt; None:
                 file.write(inspect.getsource(module))
         source_file = sys.argv[0]
         if os.path.getmtime(source_file) &gt; start_timestamp:
-            print(&#34;Warning: script file [%s] modified since start of execution!&#34;)
+            print(&#34;Warning: script file [%s] modified since start of execution!&#34; % source_file)
         with open(os.path.join(experiment_source_directory,
                                os.path.relpath(source_file).replace(os.sep, &#39;%&#39;)), &#39;w&#39;) as file:
             with open(source_file) as scriptfile:
@@ -960,7 +960,7 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
             file.write(inspect.getsource(module))
     source_file = sys.argv[0]
     if os.path.getmtime(source_file) &gt; start_timestamp:
-        print(&#34;Warning: script file [%s] modified since start of execution!&#34;)
+        print(&#34;Warning: script file [%s] modified since start of execution!&#34; % source_file)
     with open(os.path.join(experiment_source_directory,
                            os.path.relpath(source_file).replace(os.sep, &#39;%&#39;)), &#39;w&#39;) as file:
         with open(source_file) as scriptfile:
