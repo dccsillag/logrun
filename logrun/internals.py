@@ -277,7 +277,7 @@ class Experiment:
                 file.write(inspect.getsource(module))
         source_file = sys.argv[0]
         if os.path.getmtime(source_file) > start_timestamp:
-            print("Warning: script file [%s] modified since start of execution!")
+            print("Warning: script file [%s] modified since start of execution!" % source_file)
         with open(os.path.join(experiment_source_directory,
                                os.path.relpath(source_file).replace(os.sep, '%')), 'w') as file:
             with open(source_file) as scriptfile:
