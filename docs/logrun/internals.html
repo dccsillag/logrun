@@ -341,7 +341,10 @@ class Experiment:
                 continue
 
             output_file_repr = output_file.replace(os.sep, &#39;%&#39;)
-            shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
+            if os.path.isfile(output_file):
+                shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
+            else:
+                shutil.copytree(output_file, os.path.join(output_files_path, output_file_repr))
             with open(os.path.join(experiment_by_outfile_path, output_file_repr), &#39;a&#39;) as file:
                 print(self.uuid, file=file)
         with open(os.path.join(experiment_path, &#39;input_files.pickle&#39;), &#39;wb&#39;) as file:
@@ -760,7 +763,10 @@ def write(self, path: str) -&gt; None:
                 continue
 
             output_file_repr = output_file.replace(os.sep, &#39;%&#39;)
-            shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
+            if os.path.isfile(output_file):
+                shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
+            else:
+                shutil.copytree(output_file, os.path.join(output_files_path, output_file_repr))
             with open(os.path.join(experiment_by_outfile_path, output_file_repr), &#39;a&#39;) as file:
                 print(self.uuid, file=file)
         with open(os.path.join(experiment_path, &#39;input_files.pickle&#39;), &#39;wb&#39;) as file:
@@ -995,7 +1001,10 @@ if <code>overwrite</code> is <code>True</code>, then a warning is thrown and the
             continue
 
         output_file_repr = output_file.replace(os.sep, &#39;%&#39;)
-        shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
+        if os.path.isfile(output_file):
+            shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
+        else:
+            shutil.copytree(output_file, os.path.join(output_files_path, output_file_repr))
         with open(os.path.join(experiment_by_outfile_path, output_file_repr), &#39;a&#39;) as file:
             print(self.uuid, file=file)
     with open(os.path.join(experiment_path, &#39;input_files.pickle&#39;), &#39;wb&#39;) as file:
