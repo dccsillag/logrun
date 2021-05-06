@@ -312,7 +312,10 @@ class Experiment:
                 continue
 
             output_file_repr = output_file.replace(os.sep, '%')
-            shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
+            if os.path.isfile(output_file):
+                shutil.copyfile(output_file, os.path.join(output_files_path, output_file_repr))
+            else:
+                shutil.copytree(output_file, os.path.join(output_files_path, output_file_repr))
             with open(os.path.join(experiment_by_outfile_path, output_file_repr), 'a') as file:
                 print(self.uuid, file=file)
         with open(os.path.join(experiment_path, 'input_files.pickle'), 'wb') as file:
